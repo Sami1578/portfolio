@@ -1,2 +1,4 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://portfolio-0h63.onrender.com/sitemap.xml
