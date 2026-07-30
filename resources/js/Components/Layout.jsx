@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import Navbar from './layout/Navbar';
 import Footer from './layout/Footer';
 import ContactFab from './layout/ContactFab';
@@ -7,11 +7,16 @@ import ContactFab from './layout/ContactFab';
 export default function Layout({ children, title = 'Portfolio', description = 'Full-Stack Software Engineer Portfolio', profile, whatsapp }) {
     const pageTitle = title || 'SA. | Full-Stack Software Engineer';
     const metaDescription = description || 'Full-Stack Software Engineer Portfolio';
+    const { url } = usePage().props;
+    const canonicalUrl = url?.canonical;
+    
     return (
         <>
             <Head>
                 <title>{pageTitle}</title>
                 <meta name="description" content={metaDescription} />
+
+                {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
                 {/* Open Graph / Social Sharing */}
                 <meta property="og:title" content={pageTitle} />
