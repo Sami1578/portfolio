@@ -15,9 +15,9 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install Composer dependencies
+# Install Composer dependencies (skip scripts during build)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --no-scripts --optimize-autoloader
 
 # Install Node modules & build Vite/Inertia assets
 RUN npm install
