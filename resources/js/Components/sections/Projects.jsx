@@ -1,102 +1,153 @@
 import React, { useState } from 'react';
-import { ExternalLink, Code } from 'lucide-react';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
 import BracketFrame from '../ui/BracketFrame';
-import Tag from '../ui/Tag';
 import useScrollReveal from '../../hooks/useScrollReveal';
 
-const DEFAULT_CATEGORIES = [
-  { name: 'All', value: 'all' },
-  { name: 'Full Stack', value: 'fullstack' },
-  { name: 'Frontend', value: 'frontend' },
-  { name: 'Backend', value: 'backend' },
-  { name: 'Mobile', value: 'mobile' },
-];
-
 export default function Projects({ projects }) {
-  const [filter, setFilter] = useState('all');
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { ref, isVisible } = useScrollReveal();
 
-  if (!projects) return null;
+  if (!projects || projects.length === 0) return null;
 
-  const filteredProjects = filter === 'all'
-    ? projects
-    : projects.filter((project) => project.category === filter);
+  const currentProject = projects[currentIndex];
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? projects.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
+  };
 
   return (
-    <section id="projects" className="py-28 bg-bg">
+    <section id="projects" className="py-24 bg-bg">
       <Container>
         <SectionHeader
           eyebrow="Portfolio"
-          heading="Featured projects"
-          description="A selection of recent work and personal projects."
+          heading="Featured Projects"
+          description="Production systems and applications I've architected and engineered."
         />
 
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {DEFAULT_CATEGORIES.map((cat) => (
-            <button
-              key={cat.value}
-              onClick={() => setFilter(cat.value)}
-              className={`px-5 py-2 text-xs font-mono-ui uppercase tracking-[0.1em] border transition-colors duration-200 ${
-                filter === cat.value
-                  ? 'bg-accent text-bg border-accent'
-                  : 'border-border text-text-muted hover:text-text hover:border-border-strong'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Project Grid */}
-        <div ref={ref} className={`reveal ${isVisible ? 'is-visible' : ''} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8`}>
-          {filteredProjects.map((project) => (
-            <BracketFrame
-              key={project.id}
-              className="bg-surface border border-border overflow-hidden hover:border-accent/60 transition-colors duration-300"
-            >
-              <div className="h-44 bg-surface-2 flex items-center justify-center text-6xl border-b border-border">
-                {project.emoji}
+        <div
+          ref={ref}
+          className={`reveal ${isVisible ? 'is-visible' : ''} max-w-4xl mx-auto`}
+        >
+          {/* Main Carousel Card */}
+          <BracketFrame
+            key={currentProject.id}
+            className="bg-surface border border-border p-6 md:p-8 min-h-[520px] flex flex-col justify-between transition-all duration-300"
+            size={10}
+          >
+            <div>
+              {/* Header Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-border/40 font-mono text-xs">
+                <div className="flex items-center gap-2 text-text-muted">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{currentProject.architecture_tag || 'System Architecture'}</span>
+                </div>
+                {currentProject.subtitle && (
+                  <span className="text-[10px] uppercase tracking-wider text-text-muted border border-border px-2.5 py-0.5 rounded bg-bg">
+                    {currentProject.subtitle}
+                  </span>
+                )}
               </div>
-              <div className="p-6">
-                <h3 className="text-text font-semibold mb-2">{project.title}</h3>
-                <p className="text-text-muted text-sm mb-4 line-clamp-2">{project.description}</p>
 
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag, i) => (
-                    <Tag key={i}>{tag}</Tag>
+              {/* Title & Description */}
+              <h3 className="text-xl md:text-2xl font-bold text-text mb-2">
+                {currentProject.title}
+              </h3>
+              <p className="text-xs md:text-sm text-text-muted leading-relaxed mb-5">
+                {currentProject.description}
+              </p>
+
+              {/* Stats Grid */}
+              {currentProject.stats && currentProject.stats.length > 0 && (
+                <div className="grid grid-cols-3 gap-2.5 mb-5">
+                  {currentProject.stats.map((stat, idx) => (
+                    <div key={idx} className="border border-border/50 bg-bg p-2.5 rounded text-center">
+                      <div className="text-xs font-mono font-bold text-text">{stat.value}</div>
+                      <div className="text-[9px] uppercase font-mono tracking-wider text-text-muted mt-0.5">
+                        {stat.label}
+                      </div>
+                    </div>
                   ))}
                 </div>
+              )}
 
-                <div className="pt-4 border-t border-border flex items-center gap-4">
-                  {project.demoUrl && project.demoUrl !== '#' && (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-text-muted hover:text-accent transition-colors duration-200 text-sm"
-                    >
-                      <ExternalLink size={15} />
-                      Live demo
-                    </a>
-                  )}
-                  {project.codeUrl && project.codeUrl !== '#' && (
-                    <a
-                      href={project.codeUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-text-muted hover:text-accent transition-colors duration-200 text-sm"
-                    >
-                      <Code size={15} />
-                      Source
-                    </a>
-                  )}
+              {/* Highlights */}
+              {currentProject.highlights && currentProject.highlights.length > 0 && (
+                <div className="mb-5">
+                  <h4 className="font-mono text-[11px] uppercase tracking-widest text-text-muted mb-2">
+                    // Engineering Highlights
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-text-muted">
+                    {currentProject.highlights.slice(0, 4).map((point, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-text font-mono mt-0.5 select-none">›</span>
+                        <span className="leading-snug">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+              )}
+            </div>
+
+            {/* Footer & Tech Stack */}
+            <div className="pt-4 border-t border-border/40 flex flex-wrap gap-1.5">
+              {currentProject.tech_stack?.map((tech, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 text-[10px] font-mono text-text-muted border border-border bg-bg rounded-sm"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </BracketFrame>
+
+          {/* Carousel Controls (Only rendered if more than 1 project) */}
+          {projects.length > 1 && (
+            <div className="flex items-center justify-between mt-6 px-2">
+              {/* Pagination Dots */}
+              <div className="flex items-center gap-2">
+                {projects.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      currentIndex === idx
+                        ? 'w-6 bg-amber-500'
+                        : 'w-2 bg-border hover:bg-text-muted'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
               </div>
-            </BracketFrame>
-          ))}
+
+              {/* Next/Prev Navigation Buttons */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handlePrev}
+                  className="p-2 border border-border rounded bg-surface hover:border-amber-500/50 text-text transition-colors"
+                  aria-label="Previous project"
+                >
+                  <FiChevronLeft size={18} />
+                </button>
+                <span className="font-mono text-xs text-text-muted">
+                  0{currentIndex + 1} / 0{projects.length}
+                </span>
+                <button
+                  onClick={handleNext}
+                  className="p-2 border border-border rounded bg-surface hover:border-amber-500/50 text-text transition-colors"
+                  aria-label="Next project"
+                >
+                  <FiChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </Container>
     </section>

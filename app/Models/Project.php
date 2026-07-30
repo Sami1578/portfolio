@@ -6,9 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'subtitle',
+        'architecture_tag',
+        'description',
+        'highlights',
+        'stats',
+        'tech_stack',
+        'is_featured',
+        'sort_order',
+    ];
 
+    // Cast JSON columns into arrays for React
     protected $casts = [
-        'tags' => 'array',
+        'highlights' => 'array',
+        'stats' => 'array',
+        'tech_stack' => 'array',
+        'is_featured' => 'boolean',
     ];
 }

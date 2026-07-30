@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Profile;
@@ -47,12 +48,12 @@ class PortfolioService
             'projects' => $projects->map(fn($project) => [
                 'id' => $project->id,
                 'title' => $project->title,
+                'subtitle' => $project->subtitle,
+                'architecture_tag' => $project->architecture_tag,
                 'description' => $project->description,
-                'emoji' => $project->emoji,
-                'tags' => $project->tags,
-                'category' => $project->category,
-                'demoUrl' => $project->demo_url,
-                'codeUrl' => $project->code_url,
+                'highlights' => $project->highlights ?? [],
+                'stats' => $project->stats ?? [],
+                'tech_stack' => $project->tech_stack ?? [],
             ]),
             'contactInfo' => $contact?->contact_info ?? [],
             'socialLinks' => $contact?->social_links ?? [],

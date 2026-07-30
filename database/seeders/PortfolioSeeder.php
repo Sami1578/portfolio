@@ -109,66 +109,121 @@ class PortfolioSeeder extends Seeder
         }
 
         // 5. Seed Projects
-        $projects = [
-            [
-                'title' => 'E-Commerce Platform',
-                'description' => 'A full-featured e-commerce platform with payment integration, inventory management, and real-time analytics.',
-                'emoji' => '🛒',
-                'tags' => ['Laravel', 'React', 'Tailwind CSS', 'Stripe'],
-                'category' => 'fullstack',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-            [
-                'title' => 'Task Management App',
-                'description' => 'Collaborative task management tool with real-time updates, team workspaces, and progress tracking.',
-                'emoji' => '✅',
-                'tags' => ['Vue.js', 'Node.js', 'MongoDB', 'Socket.io'],
-                'category' => 'fullstack',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-            [
-                'title' => 'Portfolio Website',
-                'description' => 'Modern, responsive portfolio website with dark mode, animations, and contact form integration.',
-                'emoji' => '🎨',
-                'tags' => ['React', 'Tailwind CSS'],
-                'category' => 'frontend',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-            [
-                'title' => 'API Development',
-                'description' => 'RESTful API development with authentication, rate limiting, and comprehensive documentation.',
-                'emoji' => '🔌',
-                'tags' => ['Laravel', 'MySQL', 'JWT'],
-                'category' => 'backend',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-            [
-                'title' => 'Mobile Food Delivery App',
-                'description' => 'Cross-platform food delivery app with real-time order tracking and payment integration.',
-                'emoji' => '📱',
-                'tags' => ['React Native', 'Node.js', 'Firebase'],
-                'category' => 'mobile',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-            [
-                'title' => 'Analytics Dashboard',
-                'description' => 'Interactive dashboard with real-time data visualization, charts, and predictive analytics.',
-                'emoji' => '📊',
-                'tags' => ['React', 'D3.js', 'Python', 'FastAPI'],
-                'category' => 'fullstack',
-                'demo_url' => '#',
-                'code_url' => '#',
-            ],
-        ];
+        // $projects = [
+        //     [
+        //         'title' => 'E-Commerce Platform',
+        //         'description' => 'A full-featured e-commerce platform with payment integration, inventory management, and real-time analytics.',
+        //         'emoji' => '🛒',
+        //         'tags' => ['Laravel', 'React', 'Tailwind CSS', 'Stripe'],
+        //         'category' => 'fullstack',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        //     [
+        //         'title' => 'Task Management App',
+        //         'description' => 'Collaborative task management tool with real-time updates, team workspaces, and progress tracking.',
+        //         'emoji' => '✅',
+        //         'tags' => ['Vue.js', 'Node.js', 'MongoDB', 'Socket.io'],
+        //         'category' => 'fullstack',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        //     [
+        //         'title' => 'Portfolio Website',
+        //         'description' => 'Modern, responsive portfolio website with dark mode, animations, and contact form integration.',
+        //         'emoji' => '🎨',
+        //         'tags' => ['React', 'Tailwind CSS'],
+        //         'category' => 'frontend',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        //     [
+        //         'title' => 'API Development',
+        //         'description' => 'RESTful API development with authentication, rate limiting, and comprehensive documentation.',
+        //         'emoji' => '🔌',
+        //         'tags' => ['Laravel', 'MySQL', 'JWT'],
+        //         'category' => 'backend',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        //     [
+        //         'title' => 'Mobile Food Delivery App',
+        //         'description' => 'Cross-platform food delivery app with real-time order tracking and payment integration.',
+        //         'emoji' => '📱',
+        //         'tags' => ['React Native', 'Node.js', 'Firebase'],
+        //         'category' => 'mobile',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        //     [
+        //         'title' => 'Analytics Dashboard',
+        //         'description' => 'Interactive dashboard with real-time data visualization, charts, and predictive analytics.',
+        //         'emoji' => '📊',
+        //         'tags' => ['React', 'D3.js', 'Python', 'FastAPI'],
+        //         'category' => 'fullstack',
+        //         'demo_url' => '#',
+        //         'code_url' => '#',
+        //     ],
+        // ];
 
-        foreach ($projects as $project) {
-            Project::create($project);
-        }
+        // foreach ($projects as $project) {
+        //     Project::create($project);
+        // }
+
+        Project::create([
+            'title' => 'Enterprise Multi-Vendor E-Commerce Platform',
+            'subtitle' => 'MENA Region · NDA Protected',
+            'architecture_tag' => 'REST API · Event-Driven · Multi-Tenant',
+            'description' => 'Architected a scalable multi-vendor e-commerce platform powering web and mobile apps. Engineered multi-role management dashboards, dynamic vendor payout systems, and localized 3PL shipping integrations.',
+            'highlights' => [
+                'Built multi-role portals (Admin, Seller, Buyer) with automated vendor onboarding and payout processing.',
+                'Integrated Bosta Shipping API for automated shipment dispatch and regional tracking.',
+                'Developed secure RESTful APIs to fuel native mobile app interactions.',
+                'Implemented Stripe payment gateway alongside Cash-on-Delivery (COD) workflows.',
+                'Leveraged Laravel Events/Listeners and Service classes to decouple business logic and optimize execution.',
+                'Integrated Firebase Cloud Messaging (FCM) and real-time Buyer-to-Admin support chat.'
+            ],
+            'stats' => [
+                ['value' => '3 Roles', 'label' => 'Admin / Seller / Buyer'],
+                ['value' => '3PL API', 'label' => 'Bosta Shipping'],
+                ['value' => 'Real-Time', 'label' => 'Firebase Push & Chat']
+            ],
+            'tech_stack' => ['Laravel', 'PHP', 'MySQL', 'Stripe API', 'Bosta API', 'Firebase FCM', 'REST API'],
+            'is_featured' => true,
+            'sort_order' => 1
+        ]);
+
+        Project::create([
+            'title' => 'Automotive Video E-Commerce & ERP Integration Engine',
+            'subtitle' => 'Saudi Arabia (KSA) · NDA Protected',
+            'architecture_tag' => 'Next.js · Django REST · Async Workers · ERP Sync',
+            'description' => 'Engineered a video-first automotive e-commerce platform featuring TikTok-style video discovery, multi-tier checkout (Upfront & Installments), automated Odoo ERP synchronization, and background cron processing.',
+            'highlights' => [
+                'Built a video-driven car discovery feed with Next.js/React & Django REST Framework.',
+                'Integrated MyFatoorah payment gateway supporting full payments, financing, and webhook lifecycle listeners.',
+                'Engineered bidirectional Odoo ERP sync via custom webhooks and REST APIs for automated sales & inventory alignment.',
+                'Designed background cron services & Celery tasks for automated email dispatches, WhatsApp notifications, and status polling.',
+                'Architected specialized Content Management Dashboards for internal media teams to upload and manage vehicle catalog streams.',
+                'Executed full platform migration from React.js to Next.js to enhance SEO and server-side performance.'
+            ],
+            'stats' => [
+                ['value' => 'MyFatoorah', 'label' => 'Pay & Installments'],
+                ['value' => 'Odoo ERP', 'label' => 'Bidirectional Sync'],
+                ['value' => 'Cron & Webhooks', 'label' => 'Async Workflows'],
+            ],
+            'tech_stack' => [
+                'Next.js',
+                'React.js',
+                'Python',
+                'Django REST',
+                'Odoo API',
+                'MyFatoorah',
+                'Cron / Celery',
+                'WhatsApp API'
+            ],
+            'is_featured' => true,
+            'sort_order' => 2,
+        ]);
 
         // 6. Seed Contact & Social Info
         Contact::create([
