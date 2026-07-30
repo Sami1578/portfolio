@@ -19,7 +19,7 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --no-scripts --optimize-autoloader
 
-# Install Node modules & build Vite/Inertia assets
+# Install Node modules & build Vite/Inertia assets (runs client + ssr build)
 RUN npm install
 RUN npm run build
 
@@ -31,7 +31,10 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# Give execution permissions to the startup script
+RUN chmod +x /var/www/html/start.sh
+
 EXPOSE 80
 
-# Run migrations & seeders automatically on container startup, then launch Apache
-CMD php artisan migrate --force && apache2-foreground
+# Execute the startup script on container launch
+CMD ["/var/www/html/start.sh"]
