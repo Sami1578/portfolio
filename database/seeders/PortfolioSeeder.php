@@ -225,6 +225,36 @@ class PortfolioSeeder extends Seeder
             'sort_order' => 2,
         ]);
 
+        Project::create([
+            'title' => 'Automated Visa Processing & RPA Intelligence Engine',
+            'subtitle' => 'Dubai, UAE · NDA Protected',
+            'architecture_tag' => 'Python RPA · Google Vision OCR · Multi-Tenant RBAC',
+            'description' => 'Engineered an end-to-end visa management ecosystem featuring OCR passport document parsing, custom Python RPA bots for automated government portal submissions, 2FA bypass handling, and multi-portal access control.',
+            'highlights' => [
+                'Integrated Google Cloud Vision API to perform OCR document scanning on passports for automated application field auto-filling.',
+                'Developed custom Python RPA automation bots to execute headless portal logins and automated visa submissions under travel agent credentials.',
+                'Engineered automated 2FA handling via Google Authenticator seed exports and integrated 3rd-party CAPTCHA solving services for uninterrupted bot execution.',
+                'Architected a multi-tenant portal ecosystem for Companies, Agents, and Vendors with granular Role-Based Access Control (RBAC).',
+                'Implemented background queue workers for automated transactional email dispatches, status polling, and system notifications.'
+            ],
+            'stats' => [
+                ['value' => 'OCR Parsing', 'label' => 'Google Cloud Vision'],
+                ['value' => 'RPA Bots', 'label' => 'Auto-Submission & 2FA'],
+                ['value' => '3 Portals', 'label' => 'Company / Agent / Vendor']
+            ],
+            'tech_stack' => [
+                'Python',
+                'Laravel',
+                'Google Vision API',
+                'RPA Automation',
+                '2FA / CAPTCHA APIs',
+                'MySQL',
+                'Queue Jobs'
+            ],
+            'is_featured' => true,
+            'sort_order' => 3,
+        ]);
+
         // 6. Seed Contact & Social Info
         Contact::create([
             'contact_info' => [
