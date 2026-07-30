@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 class ContactController extends Controller
 {
     public function store(Request $request)
@@ -17,6 +17,7 @@ class ContactController extends Controller
 
         // Optional: Send an email notification or save to database
         // Mail::to('your-email@example.com')->send(new ContactMessageMail($validated));
+        Log::info('Contact form submitted:', $validated);
 
         return back()->with('success', 'Message sent successfully!');
     }

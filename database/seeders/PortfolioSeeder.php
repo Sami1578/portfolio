@@ -266,7 +266,7 @@ class PortfolioSeeder extends Seeder
                 ['name' => 'GitHub', 'href' => 'https://github.com/Sami1578', 'icon' => 'Github'],
                 ['name' => 'LinkedIn', 'href' => 'https://linkedin.com/in/sami-ahmed-3021b4287', 'icon' => 'Linkedin'],
             ],
-            'whatsapp_number' => '1234567890',
+            'whatsapp_number' => '+923325928377',
             'whatsapp_default_message' => 'Hello! I would like to connect with you.',
         ]);
     }
