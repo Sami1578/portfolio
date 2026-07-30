@@ -9,4 +9,4 @@ php artisan inertia:start-ssr &
 
 # 3. Start Apache web server in the foreground
 echo "Starting Apache..."
-exec apache2-foregrounds
+exec apache2-foreground
