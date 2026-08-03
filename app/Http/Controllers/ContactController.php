@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactConfirmationMail;
 use App\Mail\ContactMessageMail;
 use App\Models\ContactMessage;
 use Illuminate\Http\Request;
@@ -22,6 +23,8 @@ class ContactController extends Controller
         ContactMessage::create($validated);
 
         Mail::to(config('mail.to.address'))->send(new ContactMessageMail($validated));
+        Mail::to($validated['email'])->send(new ContactConfirmationMail($validated));
+
 
         Log::info('Contact form submitted:', $validated);
 
