@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactMessageMail;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+
 class ContactController extends Controller
 {
     public function store(Request $request)
@@ -15,8 +19,10 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        // Optional: Send an email notification or save to database
-        // Mail::to('your-email@example.com')->send(new ContactMessageMail($validated));
+        ContactMessage::create($validated);
+
+        Mail::to(config('mail.to.address'))->send(new ContactMessageMail($validated));
+
         Log::info('Contact form submitted:', $validated);
 
         return back()->with('success', 'Message sent successfully!');
