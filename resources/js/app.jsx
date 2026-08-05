@@ -5,6 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import '../css/app.css';
 
 createInertiaApp({
+  title: (title) => title || 'Sami Ahmed | Full-Stack Software Engineer',
   resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
   setup({ el, App, props }) {
     const root = createRoot(el);
