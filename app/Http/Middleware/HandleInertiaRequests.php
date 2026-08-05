@@ -40,6 +40,15 @@ class HandleInertiaRequests extends Middleware
             'url' => [
                 'canonical' => $request->url(),
             ],
+            'auth' => [
+                'user' => $request->user()
+                    ? $request->user()->only('id', 'name', 'email', 'is_admin')
+                    : null,
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }
