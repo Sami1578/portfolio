@@ -1,67 +1,67 @@
 {
   "node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
   "resources/js/Components/Layout.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/layout/ContactFab.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/layout/Footer.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/layout/Navbar.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/sections/About.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/sections/Contact.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/sections/Hero.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/sections/Projects.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/sections/Skills.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
-  ],
-  "resources/js/Components/ui/BracketFrame.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/Button.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/Container.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/Eyebrow.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/FieldRow.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/SectionHeader.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Components/ui/StatusDot.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
+  ],
+  "resources/js/Components/ui/ThemeToggle.jsx": [
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/Pages/Home.jsx": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/config/site.js": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/hooks/useContactForm.js": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/hooks/useScrollReveal.js": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/hooks/useScrolled.js": [
-    "/build/assets/Home-BWlsZRT-.js"
+    "/build/assets/Home-BBAUByf1.js"
   ],
   "resources/js/ssr.jsx": []
 }

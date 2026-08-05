@@ -1,13 +1,13 @@
 import React from 'react';
 
 /**
- * Small monospace label used above section headings — part of the
- * "technical dossier" motif (field labels, not decorative numbering).
+ * Editorial kicker — a short accent rule followed by a tracked, uppercase
+ * label. Replaces the old blueprint "field label" motif.
  */
 export default function Eyebrow({ children, className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-2 font-mono-ui text-xs tracking-[0.25em] uppercase text-accent ${className}`}>
-      <span className="w-1.5 h-1.5 bg-accent" />
+    <span className={`inline-flex items-center gap-3 font-mono-ui text-xs tracking-[0.28em] uppercase text-text-muted ${className}`}>
+      <span className="h-px w-7 bg-accent" />
       {children}
     </span>
   );

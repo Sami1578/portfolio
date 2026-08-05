@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
-import BracketFrame from '../ui/BracketFrame';
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 export default function Projects({ projects }) {
@@ -22,129 +21,134 @@ export default function Projects({ projects }) {
   };
 
   return (
-    <section id="projects" className="py-24 bg-bg">
+    <section id="projects" className="py-24 md:py-32 bg-bg">
       <Container>
         <SectionHeader
+          index="03"
           eyebrow="Portfolio"
-          heading="Featured Projects"
+          heading="Featured projects"
           description="Production systems and applications I've architected and engineered."
         />
 
         <div
           ref={ref}
-          className={`reveal ${isVisible ? 'is-visible' : ''} max-w-4xl mx-auto`}
+          className={`reveal ${isVisible ? 'is-visible' : ''}`}
         >
-          {/* Main Carousel Card */}
-          <BracketFrame
+          {/* Case study — editorial article layout */}
+          <article
             key={currentProject.id}
-            className="bg-surface border border-border p-6 md:p-8 min-h-[520px] flex flex-col justify-between transition-all duration-300"
-            size={10}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-8 border-t border-border-strong pt-10"
           >
-            <div>
-              {/* Header Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-border/40 font-mono text-xs">
-                <div className="flex items-center gap-2 text-text-muted">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>{currentProject.architecture_tag || 'System Architecture'}</span>
-                </div>
-                {currentProject.subtitle && (
-                  <span className="text-[10px] uppercase tracking-wider text-text-muted border border-border px-2.5 py-0.5 rounded bg-bg">
-                    {currentProject.subtitle}
-                  </span>
-                )}
+            {/* Left rail: meta */}
+            <div className="lg:col-span-4">
+              <div className="flex items-center gap-2.5 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted">
+                <span className="w-1.5 h-1.5 rounded-full bg-status animate-pulse" />
+                {currentProject.architecture_tag || 'System Architecture'}
               </div>
 
-              {/* Title & Description */}
-              <h3 className="text-xl md:text-2xl font-bold text-text mb-2">
+              {currentProject.subtitle && (
+                <p className="mt-4 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-accent">
+                  {currentProject.subtitle}
+                </p>
+              )}
+
+              {/* Stats as a spec list */}
+              {currentProject.stats && currentProject.stats.length > 0 && (
+                <dl className="mt-8 divide-y divide-border border-t border-border">
+                  {currentProject.stats.map((stat, idx) => (
+                    <div key={idx} className="flex items-baseline justify-between gap-4 py-3">
+                      <dt className="font-mono-ui text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                        {stat.label}
+                      </dt>
+                      <dd className="font-display text-lg text-text leading-none">{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+
+            {/* Right: title, description, highlights */}
+            <div className="lg:col-span-8">
+              <h3 className="font-display text-3xl md:text-4xl leading-[1.05] tracking-[-0.01em] text-text text-balance">
                 {currentProject.title}
               </h3>
-              <p className="text-xs md:text-sm text-text-muted leading-relaxed mb-5">
+              <p className="mt-5 text-text-muted leading-relaxed max-w-2xl">
                 {currentProject.description}
               </p>
 
-              {/* Stats Grid */}
-              {currentProject.stats && currentProject.stats.length > 0 && (
-                <div className="grid grid-cols-3 gap-2.5 mb-5">
-                  {currentProject.stats.map((stat, idx) => (
-                    <div key={idx} className="border border-border/50 bg-bg p-2.5 rounded text-center">
-                      <div className="text-xs font-mono font-bold text-text">{stat.value}</div>
-                      <div className="text-[9px] uppercase font-mono tracking-wider text-text-muted mt-0.5">
-                        {stat.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Highlights */}
               {currentProject.highlights && currentProject.highlights.length > 0 && (
-                <div className="mb-5">
-                  <h4 className="font-mono text-[11px] uppercase tracking-widest text-text-muted mb-2">
-                    // Engineering Highlights
+                <div className="mt-8">
+                  <h4 className="font-mono-ui text-[11px] uppercase tracking-[0.2em] text-text-muted pb-3 border-b border-border">
+                    Engineering highlights
                   </h4>
-                  <ul className="space-y-1.5 text-xs text-text-muted">
+                  <ul className="mt-1">
                     {currentProject.highlights.slice(0, 4).map((point, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-text font-mono mt-0.5 select-none">›</span>
+                      <li
+                        key={idx}
+                        className="flex items-start gap-4 py-3.5 border-b border-border text-sm text-text-muted"
+                      >
+                        <span className="font-mono-ui text-[11px] text-accent pt-0.5 shrink-0">
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
                         <span className="leading-snug">{point}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-            </div>
 
-            {/* Footer & Tech Stack */}
-            <div className="pt-4 border-t border-border/40 flex flex-wrap gap-1.5">
-              {currentProject.tech_stack?.map((tech, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-0.5 text-[10px] font-mono text-text-muted border border-border bg-bg rounded-sm"
-                >
-                  {tech}
-                </span>
-              ))}
+              {/* Tech stack */}
+              {currentProject.tech_stack && currentProject.tech_stack.length > 0 && (
+                <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
+                  {currentProject.tech_stack.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="font-mono-ui text-[11px] uppercase tracking-[0.1em] text-text-muted"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-          </BracketFrame>
+          </article>
 
-          {/* Carousel Controls (Only rendered if more than 1 project) */}
+          {/* Carousel controls */}
           {projects.length > 1 && (
-            <div className="flex items-center justify-between mt-6 px-2">
-              {/* Pagination Dots */}
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between mt-12 pt-6 border-t border-border">
+              <div className="flex items-center gap-3">
                 {projects.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentIndex === idx
-                        ? 'w-6 bg-amber-500'
-                        : 'w-2 bg-border hover:bg-text-muted'
+                    className={`h-px transition-all duration-300 ${
+                      currentIndex === idx ? 'w-10 bg-accent' : 'w-5 bg-border hover:bg-text-muted'
                     }`}
-                    aria-label={`Go to slide ${idx + 1}`}
+                    aria-label={`Go to project ${idx + 1}`}
                   />
                 ))}
               </div>
 
-              {/* Next/Prev Navigation Buttons */}
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handlePrev}
-                  className="p-2 border border-border rounded bg-surface hover:border-amber-500/50 text-text transition-colors"
-                  aria-label="Previous project"
-                >
-                  <FiChevronLeft size={18} />
-                </button>
-                <span className="font-mono text-xs text-text-muted">
-                  0{currentIndex + 1} / 0{projects.length}
+              <div className="flex items-center gap-6">
+                <span className="font-mono-ui text-xs tracking-[0.16em] text-text-muted">
+                  {String(currentIndex + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
                 </span>
-                <button
-                  onClick={handleNext}
-                  className="p-2 border border-border rounded bg-surface hover:border-amber-500/50 text-text transition-colors"
-                  aria-label="Next project"
-                >
-                  <FiChevronRight size={18} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrev}
+                    className="p-2.5 border border-border-strong text-text hover:bg-text hover:text-bg transition-colors"
+                    aria-label="Previous project"
+                  >
+                    <FiArrowLeft size={16} />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="p-2.5 border border-border-strong text-text hover:bg-text hover:text-bg transition-colors"
+                    aria-label="Next project"
+                  >
+                    <FiArrowRight size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           )}

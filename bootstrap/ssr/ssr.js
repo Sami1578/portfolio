@@ -15,7 +15,7 @@ createServer(
   (page) => createInertiaApp({
     page,
     render: ReactDOMServer.renderToString,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, /* @__PURE__ */ Object.assign({ "./Pages/Home.jsx": () => import("./assets/Home-BWlsZRT-.js") })),
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, /* @__PURE__ */ Object.assign({ "./Pages/Home.jsx": () => import("./assets/Home-BBAUByf1.js") })),
     setup: ({ App, props }) => /* @__PURE__ */ React.createElement(App, { ...props })
   })
 );

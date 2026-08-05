@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Tag({ children, className = '' }) {
   return (
-    <span className={`px-2.5 py-1 border border-border text-xs font-mono-ui text-text-muted ${className}`}>
+    <span className={`inline-flex items-center font-mono-ui text-[11px] uppercase tracking-[0.12em] text-text-muted border-b border-border pb-0.5 ${className}`}>
       {children}
     </span>
   );

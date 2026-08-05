@@ -1,26 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------- */
-/* Design tokens — single source of truth for the "technical dossier"     */
-/* palette: ink background, hairline borders, one restrained brass accent.*/
-/* Change these to re-theme the whole site.                               */
-/* ---------------------------------------------------------------------- */
 @theme {
-  --color-bg: #0b0d12;
-  --color-surface: #11141b;
-  --color-surface-2: #171b24;
-  --color-border: #242a35;
-  --color-border-strong: #333b49;
-  --color-text: #e7e9ed;
-  --color-text-muted: #8b93a1;
-  --color-accent: #c9a15f;
-  --color-accent-soft: #c9a15f26;
-  --color-status: #4ade80;
+  /* colors — same token names your components already use */
+  --color-bg:            #FBFBF9; /* warm paper */
+  --color-surface:       #FFFFFF; /* panels / alt sections */
+  --color-text:          #17171A; /* ink */
+  --color-text-muted:    #6C6C68;
+  --color-border:        #E6E5E0; /* hairline */
+  --color-border-strong: #17171A; /* editorial rules / button borders */
+  --color-accent:        #1E36C9; /* cobalt */
+  --color-status:        #2F8F5B; /* available green */
 
-  --font-display: "Space Grotesk", sans-serif;
-  --font-sans: "Inter", sans-serif;
-  --font-mono-ui: "JetBrains Mono", monospace;
+  /* fonts */
+  --font-display: "Newsreader", Georgia, serif;
+  --font-sans:    "Inter", system-ui, sans-serif;
+  --font-mono-ui: "Inter", system-ui, sans-serif; /* tracked uppercase labels */
+}
+
+/* Tell Tailwind v4 that `.dark` on <html> activates the dark variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Dark palette — same token names, overridden values */
+.dark {
+  --color-bg:            #0E0E10; /* near-black ink */
+  --color-surface:       #17171A; /* panels / alt sections */
+  --color-text:          #F2F1EC; /* paper white */
+  --color-text-muted:    #9B9B95;
+  --color-border:        #2A2A2E; /* hairline */
+  --color-border-strong: #F2F1EC; /* editorial rules / button borders */
+  --color-accent:        #6E85FF; /* lifted cobalt for dark bg */
+  --color-status:        #4FB27C; /* available green */
 }
 
 /*

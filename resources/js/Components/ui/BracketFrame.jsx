@@ -1,23 +1,40 @@
 import React from 'react';
 
+const base =
+  'group inline-flex items-center justify-center gap-2 font-mono-ui text-xs uppercase tracking-[0.18em] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
+
+const sizes = {
+  md: 'px-7 py-3.5',
+  sm: 'px-5 py-2.5',
+};
+
+const variants = {
+  // Confident editorial ink button that warms to the accent on hover.
+  primary: 'bg-text text-bg hover:bg-accent',
+  // Hairline-bordered secondary that inverts to ink on hover.
+  ghost: 'border border-border-strong text-text hover:bg-text hover:text-bg',
+  // Inline underlined text link.
+  link: 'text-text hover:text-accent px-0 py-0 underline underline-offset-4 decoration-1 decoration-border-strong hover:decoration-accent',
+};
+
 /**
- * The site's signature motif: four corner brackets, like a viewfinder or
- * a blueprint annotation. Applied to the hero panel, stat cards, skill
- * cards, project cards, and the contact panel, in place of glassmorphism
- * or gradient borders. Deliberately bold enough to register at a glance —
- * a 1px hairline here reads as "missing border", not "restrained".
+ * Renders a <button> or, when `href` is passed, an <a> — same visual API
+ * either way. Use `size="sm"` instead of overriding padding directly.
  */
-export default function BracketFrame({ children, className = '', size = 18 }) {
-  const corner = 'absolute border-accent pointer-events-none';
-  const s = `${size}px`;
+export default function Button({ children, variant = 'primary', size = 'md', href, className = '', ...props }) {
+  const classes = `${base} ${sizes[size]} ${variants[variant]} ${className}`;
+
+  if (href) {
+    return (
+      <a href={href} className={classes} {...props}>
+        {children}
+      </a>
+    );
+  }
 
   return (
-    <div className={`relative ${className}`}>
-      <span className={`${corner} -top-[2px] -left-[2px] border-t-2 border-l-2`} style={{ width: s, height: s }} />
-      <span className={`${corner} -top-[2px] -right-[2px] border-t-2 border-r-2`} style={{ width: s, height: s }} />
-      <span className={`${corner} -bottom-[2px] -left-[2px] border-b-2 border-l-2`} style={{ width: s, height: s }} />
-      <span className={`${corner} -bottom-[2px] -right-[2px] border-b-2 border-r-2`} style={{ width: s, height: s }} />
+    <button className={classes} {...props}>
       {children}
-    </div>
+    </button>
   );
 }

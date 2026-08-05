@@ -6,8 +6,6 @@ import {
 } from 'react-icons/si';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
-import BracketFrame from '../ui/BracketFrame';
-import Tag from '../ui/Tag';
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 const ICONS = {
@@ -22,56 +20,54 @@ export default function Skills({ categories }) {
   if (!categories || categories.length === 0) return null;
 
   return (
-    <section id="skills" className="py-28 bg-surface">
+    <section id="skills" className="py-24 md:py-32 bg-surface">
       <Container>
         <SectionHeader
+          index="02"
           eyebrow="Skills"
           heading="Tech stack"
           description="Technologies and tools I work with day to day."
         />
 
-        {/* Outer Flex container: Centers any leftover cards (like 4th card) horizontally */}
-        <div 
-          ref={ref} 
-          className={`reveal ${isVisible ? 'is-visible' : ''} flex flex-wrap justify-center gap-6 w-full max-w-7xl mx-auto`}
+        {/* Editorial column grid separated by hairlines */}
+        <div
+          ref={ref}
+          className={`reveal ${isVisible ? 'is-visible' : ''} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-border-strong`}
         >
           {categories.map((category, index) => (
-            <div 
-              key={index} 
-              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] min-w-[240px]"
+            <div
+              key={index}
+              className="border-b border-border sm:border-r sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(4n)]:border-r-0 px-0 sm:px-6 lg:px-7 first:pl-0 py-8"
             >
-              <BracketFrame className="bg-bg border border-border p-6 h-full" size={8}>
-                <h3 className="font-mono-ui text-xs uppercase tracking-[0.2em] text-text-muted text-center mb-6">
+              <div className="flex items-baseline justify-between mb-7">
+                <h3 className="font-mono-ui text-[11px] uppercase tracking-[0.2em] text-text-muted">
                   {category.title}
                 </h3>
+                <span className="font-mono-ui text-[11px] text-accent">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
 
-                <div className="flex flex-col gap-4 w-full">
-                  {category.skills.map((skill, skillIndex) => {
-                    const Icon = ICONS[skill.icon];
-                    return (
-                      <div
-                        key={skillIndex}
-                        className="flex items-start gap-3 w-full"
-                      >
-                        {/* Icon Box */}
-                        <div className="w-9 h-9 border border-border flex items-center justify-center flex-shrink-0 mt-0.5">
-                          {Icon && <Icon size={18} style={{ color: skill.color }} />}
-                        </div>
-
-                        {/* Name on line 1 + Subtext level on line 2 */}
-                        <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-text text-sm font-medium leading-snug">
-                            {skill.name}
-                          </span>
-                          <span className="text-[11px] font-mono text-text-muted tracking-wider uppercase mt-0.5">
-                            {skill.level}
-                          </span>
-                        </div>
+              <ul className="flex flex-col gap-5">
+                {category.skills.map((skill, skillIndex) => {
+                  const Icon = ICONS[skill.icon];
+                  return (
+                    <li key={skillIndex} className="flex items-start gap-3">
+                      {Icon && (
+                        <Icon size={18} className="mt-0.5 shrink-0" style={{ color: skill.color }} />
+                      )}
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-text text-sm font-medium leading-snug">
+                          {skill.name}
+                        </span>
+                        <span className="text-[10px] font-mono-ui text-text-muted tracking-[0.14em] uppercase mt-1">
+                          {skill.level}
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-              </BracketFrame>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           ))}
         </div>
