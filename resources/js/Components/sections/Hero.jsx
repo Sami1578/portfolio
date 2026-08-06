@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import Container from '../ui/Container';
 import Button from '../ui/Button';
 import StatusDot from '../ui/StatusDot';
+import TiltIDE from '../ui/TiltIDE'; // Import the 3D container
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 export default function Hero({ profile }) {
@@ -47,38 +48,46 @@ export default function Hero({ profile }) {
           </Button>
         </div>
 
-        {/* Signature element: a floating "editor" mockup, always dark regardless of site theme */}
-        <div
-          className={`${show()} mt-16 max-w-3xl mx-auto rounded-2xl border border-border bg-surface shadow-2xl shadow-black/10 overflow-hidden text-left`}
-          style={delayStyle(420)}
-        >
-          <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
-            <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
-            <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
-            <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
-            <span className="ml-3 font-mono-ui text-xs text-text-muted">app/Services/{profile.initials}Service.php</span>
-          </div>
-          <div className="grid grid-cols-[40px_1fr] gap-x-2 bg-[#0D0E14] px-5 py-6 font-mono-ui text-[13px] leading-8">
-            <div className="text-right text-[#4A4C5C] select-none">
-              1<br />2<br />3<br />4<br />5<br />6<br />7
+        {/* Interactive 3D Editor Mockup */}
+        <div className={`${show()} mt-16 max-w-3xl mx-auto`} style={delayStyle(420)}>
+          <TiltIDE>
+            {/* Top Bar Header (Pushed slightly forward) */}
+            <div 
+              className="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface relative z-10"
+              style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
+              <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
+              <span className="w-2.5 h-2.5 rounded-full bg-border-strong" />
+              <span className="ml-3 font-mono-ui text-xs text-text-muted">app/Services/{profile.initials}Service.php</span>
             </div>
-            <div className="text-[#D8D9E3] whitespace-pre">
-              <span className="text-[#C792EA]">class</span> <span className="text-[#FFCB6B]">{profile.initials}Service</span>{'\n'}
-              {'{'}
-              {'\n'}
-              &nbsp;&nbsp;<span className="text-[#C792EA]">public function</span> <span className="text-[#82AAFF]">handle</span>(Request $request): Response{'\n'}
-              &nbsp;&nbsp;{'{'}
-              {'\n'}
-              &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#5A5C6B]">// validate, persist, respond</span>{'\n'}
-              &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#C792EA]">return</span> $this-&gt;<span className="text-[#82AAFF]">respond</span>($request);{'\n'}
-              &nbsp;&nbsp;{'}'}
-              {'\n'}
-              {'}'}
+
+            {/* Code Body (Pushed 20px forward in 3D space) */}
+            <div 
+              className="grid grid-cols-[40px_1fr] gap-x-2 bg-[#0D0E14] px-5 py-6 font-mono-ui text-[13px] leading-8 shadow-inner"
+              style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }}
+            >
+              <div className="text-right text-[#4A4C5C] select-none">
+                1<br />2<br />3<br />4<br />5<br />6<br />7
+              </div>
+              <div className="text-[#D8D9E3] whitespace-pre">
+                <span className="text-[#C792EA]">class</span> <span className="text-[#FFCB6B]">{profile.initials}Service</span>{'\n'}
+                {'{'}
+                {'\n'}
+                &nbsp;&nbsp;<span className="text-[#C792EA]">public function</span> <span className="text-[#82AAFF]">handle</span>(Request $request): Response{'\n'}
+                &nbsp;&nbsp;{'{'}
+                {'\n'}
+                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#5A5C6B]">// validate, persist, respond</span>{'\n'}
+                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#C792EA]">return</span> $this-&gt;<span className="text-[#82AAFF]">respond</span>($request);{'\n'}
+                &nbsp;&nbsp;{'}'}
+                {'\n'}
+                {'}'}
+              </div>
             </div>
-          </div>
+          </TiltIDE>
         </div>
 
-        {/* Trust strip built from the real stack */}
+        {/* Trust strip */}
         <div className={`${show()} mt-14 border-t border-border pt-8`} style={delayStyle(550)}>
           <p className="font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-5">
             Working daily with

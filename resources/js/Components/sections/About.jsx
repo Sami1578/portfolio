@@ -4,6 +4,7 @@ import { Code, Server, Database, Smartphone } from 'lucide-react';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
 import FieldRow from '../ui/FieldRow';
+import TiltIDE from '../ui/TiltIDE'; // Import your 3D tilt wrapper
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 const ICONS = { Code, Server, Database, Smartphone };
@@ -46,7 +47,7 @@ export default function About({ about }) {
             </div>
           </div>
 
-          {/* Services as a premium card grid */}
+          {/* Services grid with 3D Tilt */}
           <div className="lg:col-span-7">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {about.services.map((service, index) => {
@@ -54,18 +55,36 @@ export default function About({ about }) {
                 return (
                   <div
                     key={index}
-                    className={`group rounded-2xl border border-border bg-surface p-6 transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/10 ${
+                    className={`transition-all duration-500 ${
                       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                     }`}
                     style={{ transitionDelay: `${300 + index * 100}ms` }}
                   >
-                    <div className="w-11 h-11 rounded-xl bg-accent-soft flex items-center justify-center mb-6">
-                      <Icon size={20} className="text-accent-deep transition-transform duration-300 group-hover:scale-110" />
-                    </div>
-                    <h4 className="text-text font-semibold group-hover:text-accent transition-colors duration-300">
-                      {service.title}
-                    </h4>
-                    <p className="mt-2 text-text-muted text-sm leading-relaxed">{service.description}</p>
+                    <TiltIDE className="p-6 h-full hover:border-accent/40 transition-colors duration-300">
+                      {/* Floating Icon Box (Pushed 15px forward in 3D space) */}
+                      <div 
+                        className="w-11 h-11 rounded-xl bg-accent-soft flex items-center justify-center mb-6 shadow-sm"
+                        style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }}
+                      >
+                        <Icon size={20} className="text-accent-deep transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+
+                      {/* Service Title (Pushed 10px forward) */}
+                      <h4 
+                        className="text-text font-semibold group-hover:text-accent transition-colors duration-300"
+                        style={{ transform: 'translateZ(10px)' }}
+                      >
+                        {service.title}
+                      </h4>
+
+                      {/* Description (Pushed 5px forward) */}
+                      <p 
+                        className="mt-2 text-text-muted text-sm leading-relaxed"
+                        style={{ transform: 'translateZ(5px)' }}
+                      >
+                        {service.description}
+                      </p>
+                    </TiltIDE>
                   </div>
                 );
               })}

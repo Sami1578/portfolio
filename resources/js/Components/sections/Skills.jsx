@@ -1,3 +1,4 @@
+// resources/js/Components/sections/Skills.jsx
 import React, { useState } from 'react';
 import {
   SiReact, SiVuedotjs, SiTailwindcss, SiJavascript,
@@ -6,6 +7,7 @@ import {
 } from 'react-icons/si';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
+import TiltIDE from '../ui/TiltIDE'; // Import your 3D tilt component
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 const ICONS = {
@@ -43,8 +45,9 @@ export default function Skills({ categories }) {
         />
       </Container>
 
+      {/* 3D Infinite Marquee */}
       <div
-        className="relative mb-16 select-none"
+        className="relative mb-16 select-none py-4"
         style={{
           maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
           WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
@@ -53,7 +56,7 @@ export default function Skills({ categories }) {
         onMouseLeave={() => setMarqueePaused(false)}
       >
         <div
-          className="flex w-max gap-14 py-2"
+          className="flex w-max gap-8 py-2"
           style={{
             animation: 'skills-marquee 28s linear infinite',
             animationPlayState: marqueePaused ? 'paused' : 'running',
@@ -64,12 +67,24 @@ export default function Skills({ categories }) {
             return (
               <div
                 key={`${skill.name}-${idx}`}
-                className="flex items-center gap-2.5 shrink-0 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
+                className="group/badge shrink-0 cursor-pointer transition-transform duration-300 hover:scale-110"
               >
-                {Icon && <Icon size={22} style={{ color: skill.color }} />}
-                <span className="font-mono-ui text-xs uppercase tracking-[0.14em] text-text-muted whitespace-nowrap">
-                  {skill.name}
-                </span>
+                {/* Floating 3D Badge */}
+                <div 
+                  className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-2.5 shadow-md transition-all duration-300 group-hover/badge:border-accent/40 group-hover/badge:shadow-lg group-hover/badge:shadow-accent/10"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  {Icon && (
+                    <Icon 
+                      size={20} 
+                      className="transition-transform duration-300 group-hover/badge:scale-125 group-hover/badge:rotate-6" 
+                      style={{ color: skill.color }} 
+                    />
+                  )}
+                  <span className="font-mono-ui text-xs font-semibold uppercase tracking-[0.14em] text-text-muted group-hover/badge:text-text transition-colors duration-200 whitespace-nowrap">
+                    {skill.name}
+                  </span>
+                </div>
               </div>
             );
           })}
@@ -85,60 +100,76 @@ export default function Skills({ categories }) {
         `}</style>
       </div>
 
+      {/* 3D Category Cards Grid */}
       <Container>
         <div ref={ref} className={`reveal ${isVisible ? 'is-visible' : ''} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6`}>
           {categories.map((category, index) => (
             <div
               key={index}
-              className={`group rounded-2xl border border-border bg-surface p-6 shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/10 ${
+              className={`transition-all duration-500 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <div className="flex items-baseline justify-between mb-7">
-                <h3 className="font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted group-hover:text-accent transition-colors duration-300">
-                  {category.title}
-                </h3>
-                <span className="font-mono-ui text-[11px] text-accent-deep bg-accent-soft px-1.5 py-0.5 rounded-full">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-              </div>
+              <TiltIDE className="p-6 h-full border border-border bg-surface hover:border-accent/40 transition-colors duration-300">
+                {/* Header Row (Layer Z: 15px) */}
+                <div 
+                  className="flex items-baseline justify-between mb-7"
+                  style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }}
+                >
+                  <h3 className="font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted group-hover:text-accent transition-colors duration-300">
+                    {category.title}
+                  </h3>
+                  <span className="font-mono-ui text-[11px] text-accent-deep bg-accent-soft px-1.5 py-0.5 rounded-full shadow-sm">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
 
-              <ul className="flex flex-col gap-5">
-                {category.skills.map((skill, skillIndex) => {
-                  const Icon = ICONS[skill.icon];
-                  const width = levelToWidth(skill.level);
-                  return (
-                    <li key={skillIndex} className="group/skill">
-                      <div className="flex items-center gap-3 mb-2">
-                        {Icon && (
-                          <Icon
-                            size={17}
-                            className="shrink-0 transition-transform duration-300 group-hover/skill:scale-125"
-                            style={{ color: skill.color }}
+                {/* Skills List (Layer Z: 10px) */}
+                <ul 
+                  className="flex flex-col gap-5"
+                  style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}
+                >
+                  {category.skills.map((skill, skillIndex) => {
+                    const Icon = ICONS[skill.icon];
+                    const width = levelToWidth(skill.level);
+                    return (
+                      <li key={skillIndex} className="group/skill">
+                        <div className="flex items-center gap-3 mb-2">
+                          {Icon && (
+                            <Icon
+                              size={17}
+                              className="shrink-0 transition-transform duration-300 group-hover/skill:scale-125"
+                              style={{ color: skill.color }}
+                            />
+                          )}
+                          <span className="text-text text-sm font-medium leading-snug group-hover/skill:text-accent transition-colors duration-300">
+                            {skill.name}
+                          </span>
+                          <span className="ml-auto text-[10px] font-mono-ui text-text-muted tracking-[0.1em] uppercase">
+                            {skill.level}
+                          </span>
+                        </div>
+                        
+                        {/* Progress Bar (Layer Z: 5px) */}
+                        <div 
+                          className="h-1 w-full rounded-full bg-border overflow-hidden shadow-inner"
+                          style={{ transform: 'translateZ(5px)' }}
+                        >
+                          <div
+                            className="h-full rounded-full bg-accent transition-all ease-out"
+                            style={{
+                              width: isVisible ? `${width}%` : '0%',
+                              transitionDuration: '900ms',
+                              transitionDelay: `${300 + index * 100 + skillIndex * 80}ms`,
+                            }}
                           />
-                        )}
-                        <span className="text-text text-sm font-medium leading-snug group-hover/skill:text-accent transition-colors duration-300">
-                          {skill.name}
-                        </span>
-                        <span className="ml-auto text-[10px] font-mono-ui text-text-muted tracking-[0.1em] uppercase">
-                          {skill.level}
-                        </span>
-                      </div>
-                      <div className="h-1 w-full rounded-full bg-border overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-accent transition-all ease-out"
-                          style={{
-                            width: isVisible ? `${width}%` : '0%',
-                            transitionDuration: '900ms',
-                            transitionDelay: `${300 + index * 100 + skillIndex * 80}ms`,
-                          }}
-                        />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </TiltIDE>
             </div>
           ))}
         </div>

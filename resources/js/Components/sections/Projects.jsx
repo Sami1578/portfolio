@@ -1,7 +1,9 @@
+// resources/js/Components/sections/Projects.jsx
 import React, { useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
+import TiltIDE from '../ui/TiltIDE'; // Import your 3D tilt component
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 const SWIPE_THRESHOLD = 50; // px
@@ -39,40 +41,53 @@ export default function Projects({ projects }) {
         />
 
         <div ref={ref} className={`reveal ${isVisible ? 'is-visible' : ''}`}>
-          <div className="overflow-hidden rounded-2xl border border-border" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+          {/* Main Slider Shell */}
+          <div className="overflow-hidden rounded-2xl border border-border shadow-2xl shadow-black/5" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <div
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {projects.map((project, pIdx) => (
+              {projects.map((project) => (
                 <article key={project.id} className="w-full shrink-0 bg-surface grid grid-cols-1 lg:grid-cols-2">
-                  {/* Gradient stat panel */}
-                  <div className="bg-gradient-to-br from-accent-soft to-surface-2 p-10 flex items-center justify-center">
-                    <div className="w-full max-w-sm rounded-xl bg-surface border border-border shadow-lg shadow-accent/10 p-6">
-                      <div className="flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5">
+                  
+                  {/* Left Column: Gradient Panel with 3D Floating Stat Card */}
+                  <div className="bg-gradient-to-br from-accent-soft via-surface-2 to-surface-2 p-8 lg:p-12 flex items-center justify-center">
+                    <TiltIDE className="w-full max-w-sm border border-border bg-surface p-6">
+                      <div 
+                        className="flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5"
+                        style={{ transform: 'translateZ(15px)' }}
+                      >
                         <span className="w-1.5 h-1.5 rounded-full bg-status animate-pulse" />
                         {project.architecture_tag || 'System Architecture'}
                       </div>
-                      {project.stats?.map((stat, idx) => (
-                        <div key={idx} className="flex items-center justify-between py-3 border-b border-border last:border-none text-sm">
-                          <span className="text-text-muted">{stat.label}</span>
-                          <span className="font-display font-bold text-accent-deep">{stat.value}</span>
-                        </div>
-                      ))}
-                    </div>
+                      
+                      <div 
+                        className="space-y-1"
+                        style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}
+                      >
+                        {project.stats?.map((stat, idx) => (
+                          <div key={idx} className="flex items-center justify-between py-3 border-b border-border last:border-none text-sm">
+                            <span className="text-text-muted">{stat.label}</span>
+                            <span className="font-display font-bold text-accent-deep">{stat.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </TiltIDE>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-10 lg:p-12">
-                    {project.subtitle && (
-                      <span className="inline-block font-mono-ui text-[11px] font-semibold text-accent-deep bg-accent-soft px-2.5 py-1 rounded-full mb-5">
-                        {project.subtitle}
-                      </span>
-                    )}
-                    <h3 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-text text-balance">
-                      {project.title}
-                    </h3>
-                    <p className="mt-4 text-text-muted leading-relaxed">{project.description}</p>
+                  {/* Right Column: Project Details with Micro-3D Interactions */}
+                  <div className="p-10 lg:p-12 flex flex-col justify-center">
+                    <div>
+                      {project.subtitle && (
+                        <span className="inline-block font-mono-ui text-[11px] font-semibold text-accent-deep bg-accent-soft px-2.5 py-1 rounded-full mb-5 shadow-sm">
+                          {project.subtitle}
+                        </span>
+                      )}
+                      <h3 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-text text-balance">
+                        {project.title}
+                      </h3>
+                      <p className="mt-4 text-text-muted leading-relaxed">{project.description}</p>
+                    </div>
 
                     {project.highlights && project.highlights.length > 0 && (
                       <ul className="mt-6 space-y-2.5">
@@ -85,10 +100,14 @@ export default function Projects({ projects }) {
                       </ul>
                     )}
 
+                    {/* Tech Badges with 3D Hover Pop */}
                     {project.tech_stack && project.tech_stack.length > 0 && (
-                      <div className="mt-7 flex flex-wrap gap-2">
+                      <div className="mt-8 flex flex-wrap gap-2">
                         {project.tech_stack.map((tech, idx) => (
-                          <span key={idx} className="font-mono-ui text-[11px] uppercase tracking-[0.08em] text-text-muted bg-surface-2 border border-border px-2.5 py-1 rounded-md">
+                          <span 
+                            key={idx} 
+                            className="font-mono-ui text-[11px] uppercase tracking-[0.08em] text-text-muted bg-surface-2 border border-border px-3 py-1.5 rounded-md shadow-sm transition-all duration-200 hover:scale-105 hover:border-accent/40 hover:text-text cursor-default"
+                          >
                             {tech}
                           </span>
                         ))}
@@ -100,6 +119,7 @@ export default function Projects({ projects }) {
             </div>
           </div>
 
+          {/* Navigation Controls */}
           {projects.length > 1 && (
             <div className="flex items-center justify-between mt-8">
               <div className="flex items-center gap-2.5">
