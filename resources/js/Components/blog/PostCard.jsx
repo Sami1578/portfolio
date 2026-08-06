@@ -11,7 +11,7 @@ export default function PostCard({ post }) {
       <div className="image-zoom aspect-[16/9] w-full overflow-hidden bg-surface-2">
         {post.featured_image_path ? (
           <img
-            src={`/storage/${post.featured_image_path}`}
+            src={`${post.featured_image_path}`}
             alt={post.title}
             className="h-full w-full object-cover"
           />

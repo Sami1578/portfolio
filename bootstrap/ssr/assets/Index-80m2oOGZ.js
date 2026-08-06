@@ -16,7 +16,7 @@ function PostCard({ post }) {
         /* @__PURE__ */ jsx("div", { className: "image-zoom aspect-[16/9] w-full overflow-hidden bg-surface-2", children: post.featured_image_path ? /* @__PURE__ */ jsx(
           "img",
           {
-            src: `/storage/${post.featured_image_path}`,
+            src: `${post.featured_image_path}`,
             alt: post.title,
             className: "h-full w-full object-cover"
           }

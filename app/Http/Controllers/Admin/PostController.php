@@ -56,7 +56,7 @@ class PostController extends Controller
 
         if ($request->hasFile('featured_image')) {
             if ($post->featured_image_path) {
-                Storage::disk('public')->delete($post->featured_image_path);
+                Storage::delete($post->featured_image_path);
             }
             $data['featured_image_path'] = $this->storeImage($request->file('featured_image'), 'posts/featured');
         }
@@ -69,11 +69,11 @@ class PostController extends Controller
     public function destroy(Post $post): RedirectResponse
     {
         if ($post->featured_image_path) {
-            Storage::disk('public')->delete($post->featured_image_path);
+            Storage::delete($post->featured_image_path);
         }
 
         foreach ($this->extractContentImagePaths($post->content) as $path) {
-            Storage::disk('public')->delete($path);
+            Storage::delete($path);
         }
 
         $post->delete();
@@ -94,7 +94,7 @@ class PostController extends Controller
         $path = $this->storeImage($request->file('image'), 'posts/content');
 
         // Relative URL avoids depending on APP_URL matching the actual serving host/port.
-        return response()->json(['url' => '/storage/' . $path]);
+        return response()->json(['url' => $path]);
     }
 
     private function storeImage($file, string $directory): string
@@ -104,9 +104,12 @@ class PostController extends Controller
         $image->scaleDown(width: 1600);
 
         $filename = $directory . '/' . uniqid() . '.webp';
-        Storage::disk('public')->put($filename, (string) $image->toWebp(82));
 
-        return $filename;
+        // Store image directly in Cloudflare R2
+        Storage::put($filename, (string) $image->toWebp(82));
+
+        // Return full public URL (using AWS_URL / R2.dev domain)
+        return Storage::url($filename);
     }
 
     /**
@@ -117,8 +120,8 @@ class PostController extends Controller
         preg_match_all('/<img[^>]+src="([^"]+)"/i', $content, $matches);
 
         return collect($matches[1] ?? [])
-            ->filter(fn ($src) => str_contains($src, '/storage/posts/'))
-            ->map(fn ($src) => Str::after($src, '/storage/'))
+            ->filter(fn($src) => str_contains($src, '/storage/posts/'))
+            ->map(fn($src) => Str::after($src, '/storage/'))
             ->all();
     }
 }

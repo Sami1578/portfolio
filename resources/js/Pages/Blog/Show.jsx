@@ -70,7 +70,7 @@ export default function BlogShow({ profile, whatsapp, socialLinks, post, comment
 
           {post.featured_image_path && (
             <img
-              src={`/storage/${post.featured_image_path}`}
+              src={`${post.featured_image_path}`}
               alt={post.title}
               className="mt-10 w-full rounded-xl border border-border object-cover"
             />

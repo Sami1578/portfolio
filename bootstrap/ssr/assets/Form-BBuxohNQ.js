@@ -137,6 +137,7 @@ function PostForm({ post = null }) {
     tech_tags: post?.tech_tags ?? [],
     is_published: post?.is_published ?? false
   });
+  console.log(post);
   const submit = (e) => {
     e.preventDefault();
     const url = isEdit ? resolve("admin.posts.update", post.id) : resolve("admin.posts.store");
@@ -177,7 +178,7 @@ function PostForm({ post = null }) {
       post?.featured_image_path && /* @__PURE__ */ jsx(
         "img",
         {
-          src: `/storage/${post.featured_image_path}`,
+          src: `${post.featured_image_path}`,
           alt: "",
           className: "h-40 w-full rounded-md border border-border object-cover sm:w-64"
         }

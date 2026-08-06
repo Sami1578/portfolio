@@ -23,6 +23,8 @@ export default function PostForm({ post = null }) {
     is_published: post?.is_published ?? false,
   });
 
+  console.log(post);
+
   const submit = (e) => {
     e.preventDefault();
     const url = isEdit ? resolve('admin.posts.update', post.id) : resolve('admin.posts.store');
@@ -67,7 +69,7 @@ export default function PostForm({ post = null }) {
         <div className="flex flex-col gap-4">
           {post?.featured_image_path && (
             <img
-              src={`/storage/${post.featured_image_path}`}
+              src={`${post.featured_image_path}`}
               alt=""
               className="h-40 w-full rounded-md border border-border object-cover sm:w-64"
             />

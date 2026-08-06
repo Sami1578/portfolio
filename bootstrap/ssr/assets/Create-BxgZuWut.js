@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import { A as AdminLayout, P as PageHeader } from "./PageHeader-DUMFrkAC.js";
-import PostForm from "./Form-CB6bV9js.js";
+import PostForm from "./Form-BBuxohNQ.js";
 import "react";
 import "@inertiajs/react";
 import "lucide-react";
@@ -16,12 +16,12 @@ import "@tiptap/starter-kit";
 import "@tiptap/extension-link";
 import "@tiptap/extension-image";
 import "axios";
-function PostsEdit({ post }) {
-  return /* @__PURE__ */ jsxs(AdminLayout, { title: "Edit Post", children: [
-    /* @__PURE__ */ jsx(PageHeader, { eyebrow: "Blog Posts", title: "Edit post", description: post.title }),
-    /* @__PURE__ */ jsx(PostForm, { post })
+function PostsCreate() {
+  return /* @__PURE__ */ jsxs(AdminLayout, { title: "New Post", children: [
+    /* @__PURE__ */ jsx(PageHeader, { eyebrow: "Blog Posts", title: "New post" }),
+    /* @__PURE__ */ jsx(PostForm, {})
   ] });
 }
 export {
-  PostsEdit as default
+  PostsCreate as default
 };
