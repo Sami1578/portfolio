@@ -167,27 +167,45 @@ function FloatingSocialDock({ socialLinks, whatsapp }) {
 }
 const SITE_ORIGIN = "https://samiahmed.dev";
 const OG_IMAGE = `${SITE_ORIGIN}/og-image.png`;
-function Layout({ children, title, description, profile, whatsapp, socialLinks }) {
+function Layout({
+  children,
+  title,
+  description,
+  profile,
+  whatsapp,
+  socialLinks,
+  type = "website",
+  image,
+  publishedTime,
+  modifiedTime,
+  keywords,
+  jsonLd
+}) {
   const metaTitle = title || "Sami Ahmed | Full-Stack Software Engineer";
   const metaDescription = description || "Full-Stack Software Engineer Portfolio";
+  const metaImage = image || OG_IMAGE;
   const { url } = usePage().props;
   const canonicalUrl = url?.canonical ?? SITE_ORIGIN;
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsxs(Head, { children: [
       /* @__PURE__ */ jsx("title", { children: metaTitle }),
       /* @__PURE__ */ jsx("meta", { "head-key": "description", name: "description", content: metaDescription }),
+      keywords?.length > 0 && /* @__PURE__ */ jsx("meta", { "head-key": "keywords", name: "keywords", content: keywords.join(", ") }),
       /* @__PURE__ */ jsx("link", { "head-key": "canonical", rel: "canonical", href: canonicalUrl }),
       /* @__PURE__ */ jsx("meta", { "head-key": "og:title", property: "og:title", content: metaTitle }),
       /* @__PURE__ */ jsx("meta", { "head-key": "og:description", property: "og:description", content: metaDescription }),
-      /* @__PURE__ */ jsx("meta", { "head-key": "og:type", property: "og:type", content: "website" }),
+      /* @__PURE__ */ jsx("meta", { "head-key": "og:type", property: "og:type", content: type }),
       /* @__PURE__ */ jsx("meta", { "head-key": "og:url", property: "og:url", content: canonicalUrl }),
-      /* @__PURE__ */ jsx("meta", { "head-key": "og:image", property: "og:image", content: OG_IMAGE }),
+      /* @__PURE__ */ jsx("meta", { "head-key": "og:image", property: "og:image", content: metaImage }),
       /* @__PURE__ */ jsx("meta", { "head-key": "og:site_name", property: "og:site_name", content: "Sami Ahmed" }),
+      type === "article" && publishedTime && /* @__PURE__ */ jsx("meta", { "head-key": "article:published_time", property: "article:published_time", content: publishedTime }),
+      type === "article" && (modifiedTime || publishedTime) && /* @__PURE__ */ jsx("meta", { "head-key": "article:modified_time", property: "article:modified_time", content: modifiedTime || publishedTime }),
+      type === "article" && keywords?.map((tag) => /* @__PURE__ */ jsx("meta", { property: "article:tag", content: tag }, tag)),
       /* @__PURE__ */ jsx("meta", { "head-key": "twitter:card", name: "twitter:card", content: "summary_large_image" }),
       /* @__PURE__ */ jsx("meta", { "head-key": "twitter:title", name: "twitter:title", content: metaTitle }),
       /* @__PURE__ */ jsx("meta", { "head-key": "twitter:description", name: "twitter:description", content: metaDescription }),
-      /* @__PURE__ */ jsx("meta", { "head-key": "twitter:image", name: "twitter:image", content: OG_IMAGE }),
-      profile && /* @__PURE__ */ jsx("script", { "head-key": "json-ld", type: "application/ld+json", children: JSON.stringify({
+      /* @__PURE__ */ jsx("meta", { "head-key": "twitter:image", name: "twitter:image", content: metaImage }),
+      jsonLd ? /* @__PURE__ */ jsx("script", { "head-key": "json-ld", type: "application/ld+json", children: JSON.stringify(jsonLd) }) : profile && /* @__PURE__ */ jsx("script", { "head-key": "json-ld", type: "application/ld+json", children: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Person",
         "name": profile.name,

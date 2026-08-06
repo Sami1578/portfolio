@@ -26,7 +26,11 @@ function CommentsIndex({ comments = [], status = "pending" }) {
       header: "Author",
       render: (row) => /* @__PURE__ */ jsxs("div", { children: [
         /* @__PURE__ */ jsx("span", { className: "text-text", children: row.author_name }),
-        /* @__PURE__ */ jsx("p", { className: "text-xs text-text-muted", children: row.author_email })
+        /* @__PURE__ */ jsx("p", { className: "text-xs text-text-muted", children: row.author_email }),
+        row.parent && /* @__PURE__ */ jsxs("p", { className: "mt-0.5 text-xs text-accent", children: [
+          "↳ reply to ",
+          row.parent.author_name
+        ] })
       ] })
     },
     {

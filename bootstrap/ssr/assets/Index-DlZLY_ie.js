@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import "react";
-import { L as Layout, C as Container } from "./Layout-CSS0vIPJ.js";
+import { L as Layout, C as Container } from "./Layout-Dc2wfF-X.js";
 import { S as SectionHeader } from "./SectionHeader-DR3FZHAX.js";
 import { Link } from "@inertiajs/react";
 import { Eye } from "lucide-react";
@@ -50,6 +50,19 @@ function PostCard({ post }) {
   );
 }
 function BlogIndex({ profile, whatsapp, socialLinks, posts = [] }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: `${profile.name} - Blog`,
+    description: "Articles on Laravel, React, and full-stack development.",
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt,
+      url: `/posts/${post.slug}`,
+      datePublished: post.published_at
+    }))
+  };
   return /* @__PURE__ */ jsx(
     Layout,
     {
@@ -58,6 +71,7 @@ function BlogIndex({ profile, whatsapp, socialLinks, posts = [] }) {
       profile,
       whatsapp,
       socialLinks,
+      jsonLd,
       children: /* @__PURE__ */ jsx("section", { className: "py-24 md:py-32 pt-40", children: /* @__PURE__ */ jsxs(Container, { children: [
         /* @__PURE__ */ jsx(
           SectionHeader,
