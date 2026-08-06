@@ -1,9 +1,10 @@
 # Base image with PHP 8.2 & Apache
 FROM php:8.2-apache
 
-# Install system dependencies & PHP extensions needed for Laravel
+# Install system dependencies, configure & install PHP extensions needed for Laravel (with GD WebP support)
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libonig-dev libxml2-dev zip curl nodejs npm \
+    git unzip libpng-dev libjpeg62-turbo-dev libfreetype6-dev libwebp-dev libonig-dev libxml2-dev zip curl nodejs npm \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Enable Apache rewrite module for Laravel
