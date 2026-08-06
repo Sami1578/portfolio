@@ -1,20 +1,20 @@
 import React from 'react';
 
 const base =
-  'group inline-flex items-center justify-center gap-2 font-mono-ui text-xs uppercase tracking-[0.18em] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
+  'group inline-flex items-center justify-center gap-2 font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl';
 
 const sizes = {
-  md: 'px-7 py-3.5',
-  sm: 'px-5 py-2.5',
+  md: 'px-6 py-3.5',
+  sm: 'px-5 py-2.5 text-[13px]',
 };
 
 const variants = {
-  // Confident editorial ink button that warms to the accent on hover.
-  primary: 'bg-text text-bg hover:bg-accent',
-  // Hairline-bordered secondary that inverts to ink on hover.
-  ghost: 'border border-border-strong text-text hover:bg-text hover:text-bg',
+  // Confident dark/accent CTA — the primary action everywhere on the site.
+  primary: 'bg-text text-bg hover:bg-accent hover:text-white hover:-translate-y-0.5',
+  // Hairline-bordered secondary.
+  ghost: 'border border-border-strong text-text bg-surface hover:bg-surface-2 hover:-translate-y-0.5',
   // Inline underlined text link.
-  link: 'text-text hover:text-accent px-0 py-0 underline underline-offset-4 decoration-1 decoration-border-strong hover:decoration-accent',
+  link: 'text-text hover:text-accent px-0 py-0 underline underline-offset-4 decoration-1 decoration-border-strong hover:decoration-accent rounded-none',
 };
 
 /**

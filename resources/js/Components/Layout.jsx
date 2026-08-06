@@ -2,12 +2,12 @@ import React from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import Navbar from './layout/Navbar';
 import Footer from './layout/Footer';
-import ContactFab from './layout/ContactFab';
+import FloatingSocialDock from './layout/FloatingSocialDock';
 
 const SITE_ORIGIN = 'https://samiahmed.dev';
 const OG_IMAGE = `${SITE_ORIGIN}/og-image.png`;
 
-export default function Layout({ children, title, description, profile, whatsapp }) {
+export default function Layout({ children, title, description, profile, whatsapp, socialLinks }) {
     const metaTitle = title || 'Sami Ahmed | Full-Stack Software Engineer';
     const metaDescription = description || 'Full-Stack Software Engineer Portfolio';
     const { url } = usePage().props;
@@ -68,7 +68,7 @@ export default function Layout({ children, title, description, profile, whatsapp
                 <Navbar profile={profile} />
                 <main className="relative">{children}</main>
                 <Footer profile={profile} />
-                <ContactFab whatsapp={whatsapp} />
+                <FloatingSocialDock socialLinks={socialLinks} whatsapp={whatsapp} />
             </div>
         </>
     );

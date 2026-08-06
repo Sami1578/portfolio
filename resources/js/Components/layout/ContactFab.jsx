@@ -12,7 +12,7 @@ export default function ContactFab({ whatsapp }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-text text-bg hover:bg-accent transition-all duration-200 transform hover:-translate-y-1 shadow-lg"
+      className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-text text-bg hover:bg-accent transition-all duration-200 transform hover:-translate-y-1 shadow-lg hover-lift"
       aria-label="Message me on WhatsApp"
     >
       <MessageCircle size={24} />

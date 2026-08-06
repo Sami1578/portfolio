@@ -7,32 +7,25 @@ export default function Footer({ profile }) {
   const title = profile?.title || '';
 
   return (
-    <footer className="bg-bg border-t border-border-strong pt-16 pb-10">
+    <footer className="bg-bg border-t border-border pt-14 pb-8">
       <Container>
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10">
-          <div className="max-w-xl">
-            <p className="font-display text-4xl md:text-5xl leading-[1.02] tracking-[-0.01em] text-text text-balance">
-              {name}
-            </p>
-            <p className="mt-3 text-text-muted">{title}</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div>
+            <p className="font-display text-xl font-bold text-text">{name}</p>
+            <p className="mt-1 text-sm text-text-muted">{title}</p>
           </div>
 
           <a
             href="#home"
-            className="group inline-flex items-center gap-2 font-mono-ui text-xs uppercase tracking-[0.18em] text-text-muted hover:text-accent transition-colors duration-200"
+            className="group inline-flex items-center gap-2 font-mono-ui text-xs uppercase tracking-[0.14em] text-text-muted hover:text-accent transition-colors duration-200"
           >
             Back to top
             <span className="transition-transform duration-200 group-hover:-translate-y-0.5">↑</span>
           </a>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="font-mono-ui text-[11px] uppercase tracking-[0.14em] text-text-muted">
-            © {new Date().getFullYear()} {name}
-          </p>
-          <p className="font-mono-ui text-[11px] uppercase tracking-[0.14em] text-text-muted">
-            All rights reserved
-          </p>
+        <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-text-muted">© {new Date().getFullYear()} {name}. All rights reserved.</p>
         </div>
       </Container>
     </footer>

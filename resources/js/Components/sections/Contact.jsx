@@ -15,17 +15,16 @@ const FIELDS = [
 ];
 
 const inputClasses =
-  'w-full bg-transparent border-0 border-b border-border py-3 text-text placeholder-text-muted/50 focus:outline-none focus:border-accent transition-colors duration-300';
+  'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-accent focus:bg-white/[0.07] transition-colors duration-300';
 
 export default function Contact({ contactInfo, socialLinks }) {
   const { formData, handleChange, handleSubmit, isSubmitting, submitted, error } = useContactForm();
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section id="contact" className="py-24 md:py-32 bg-surface relative">
+    <section id="contact" className="py-24 md:py-32 bg-bg">
       <Container>
         <SectionHeader
-          index="04"
           eyebrow="Contact"
           heading="Get in touch"
           description="Have a project in mind? Let's talk about what you need."
@@ -33,30 +32,27 @@ export default function Contact({ contactInfo, socialLinks }) {
 
         <div
           ref={ref}
-          className={`reveal ${isVisible ? 'is-visible' : ''} grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 border-t border-border-strong pt-12`}
+          className={`reveal ${isVisible ? 'is-visible' : ''} rounded-3xl bg-[#12131A] p-8 md:p-14 grid grid-cols-1 lg:grid-cols-12 gap-12`}
         >
           {/* Form */}
           <div className="lg:col-span-7">
-            <h3 className="font-display text-2xl text-text mb-8">Send a message</h3>
+            <h3 className="font-display text-2xl font-bold text-white mb-8">Send a message</h3>
 
             {submitted && (
-              <div className="mb-6 py-3 border-l-2 border-status pl-4 bg-status/5 text-status text-sm">
+              <div className="mb-6 py-3 border-l-2 border-status pl-4 bg-status/10 text-status text-sm rounded-r">
                 Message sent — I&apos;ll get back to you soon.
               </div>
             )}
             {error && (
-              <div className="mb-6 py-3 border-l-2 border-red-500 pl-4 bg-red-500/5 text-red-500 text-sm">
+              <div className="mb-6 py-3 border-l-2 border-red-500 pl-4 bg-red-500/10 text-red-400 text-sm rounded-r">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-7">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {FIELDS.map((field) => (
                 <div key={field.id}>
-                  <label
-                    htmlFor={field.id}
-                    className="block font-mono-ui text-[11px] uppercase tracking-[0.18em] text-text-muted mb-2"
-                  >
+                  <label htmlFor={field.id} className="block font-mono-ui text-[11px] uppercase tracking-[0.16em] text-white/50 mb-2">
                     {field.label}
                   </label>
                   <input
@@ -72,10 +68,7 @@ export default function Contact({ contactInfo, socialLinks }) {
               ))}
 
               <div>
-                <label
-                  htmlFor="message"
-                  className="block font-mono-ui text-[11px] uppercase tracking-[0.18em] text-text-muted mb-2"
-                >
+                <label htmlFor="message" className="block font-mono-ui text-[11px] uppercase tracking-[0.16em] text-white/50 mb-2">
                   Message
                 </label>
                 <textarea
@@ -89,7 +82,7 @@ export default function Contact({ contactInfo, socialLinks }) {
                 />
               </div>
 
-              <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full">
+              <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full !bg-accent !text-white hover:!bg-accent-deep">
                 {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
@@ -107,29 +100,24 @@ export default function Contact({ contactInfo, socialLinks }) {
 
           {/* Info + social */}
           <div className="lg:col-span-5">
-            <h3 className="font-display text-2xl text-text mb-8">Contact information</h3>
+            <h3 className="font-display text-2xl font-bold text-white mb-8">Contact information</h3>
 
-            <div className="border-t border-border">
+            <div className="space-y-1">
               {contactInfo?.map((info, index) => {
                 const Icon = ICONS[info?.icon] || Mail;
                 const content = (
-                  <div className="flex items-center gap-4 py-4 border-b border-border group">
-                    <Icon className="text-accent shrink-0" size={18} />
+                  <div className="flex items-center gap-4 py-4 border-b border-white/10 group">
+                    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                      <Icon className="text-accent" size={17} />
+                    </div>
                     <div>
-                      <p className="text-text-muted text-[11px] font-mono-ui uppercase tracking-[0.14em]">
-                        {info?.label}
-                      </p>
-                      <p className="text-text text-sm mt-0.5 group-hover:text-accent transition-colors duration-200">
-                        {info?.value}
-                      </p>
+                      <p className="text-white/40 text-[11px] font-mono-ui uppercase tracking-[0.12em]">{info?.label}</p>
+                      <p className="text-white text-sm mt-0.5 group-hover:text-accent transition-colors duration-200">{info?.value}</p>
                     </div>
                   </div>
                 );
-
                 return info?.href ? (
-                  <a key={index} href={info.href}>
-                    {content}
-                  </a>
+                  <a key={index} href={info.href}>{content}</a>
                 ) : (
                   <div key={index}>{content}</div>
                 );
@@ -138,17 +126,15 @@ export default function Contact({ contactInfo, socialLinks }) {
 
             {socialLinks && socialLinks.length > 0 && (
               <div className="mt-10">
-                <h4 className="font-mono-ui text-[11px] uppercase tracking-[0.18em] text-text-muted mb-4">
-                  Social links
-                </h4>
-                <div className="flex flex-wrap gap-x-6 gap-y-3">
+                <h4 className="font-mono-ui text-[11px] uppercase tracking-[0.16em] text-white/40 mb-4">Social links</h4>
+                <div className="flex flex-wrap gap-3">
                   {socialLinks.map((link, idx) => (
                     <a
                       key={idx}
                       href={link.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-mono-ui text-xs uppercase tracking-[0.12em] text-text-muted hover:text-accent transition-colors duration-200 underline underline-offset-4 decoration-1 decoration-border hover:decoration-accent"
+                      className="font-mono-ui text-xs uppercase tracking-[0.1em] text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition-colors duration-200"
                     >
                       {link.name}
                     </a>

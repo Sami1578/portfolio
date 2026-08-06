@@ -19,7 +19,7 @@ export default function Home({
     const pageDescription = "Full-Stack Software Engineer specializing in Laravel, React, Next.js, Python Django, and Multi-Tenant Enterprise Systems. View production case studies and architecture.";
 
     return (
-        <Layout title={`${profile.name} - ${profile.title}`} description={pageDescription} profile={profile} whatsapp={whatsapp}>
+        <Layout title={`${profile.name} - ${profile.title}`} description={pageDescription} profile={profile} whatsapp={whatsapp} socialLinks={socialLinks}>
             <Hero profile={profile} />
             <About about={about} />
 

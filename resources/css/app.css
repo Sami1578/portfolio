@@ -1,21 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   /* colors — same token names your components already use */
-  --color-bg:            #FBFBF9; /* warm paper */
-  --color-surface:       #FFFFFF; /* panels / alt sections */
-  --color-text:          #17171A; /* ink */
-  --color-text-muted:    #6C6C68;
-  --color-border:        #E6E5E0; /* hairline */
-  --color-border-strong: #17171A; /* editorial rules / button borders */
-  --color-accent:        #1E36C9; /* cobalt */
-  --color-status:        #2F8F5B; /* available green */
+  --color-bg:            #FBFBFA;
+  --color-surface:       #FFFFFF;
+  --color-surface-2:     #F4F4F2;
+  --color-text:          #12131A;
+  --color-text-muted:    #5A5C6B;
+  --color-border:        #E7E7E3;
+  --color-border-strong: #D8D8D3;
+  --color-accent:        #4E46DC;
+  --color-accent-deep:   #332DA8;
+  --color-accent-soft:   #EEEDFC;
+  --color-status:        #3FBF6B;
 
   /* fonts */
-  --font-display: "Newsreader", Georgia, serif;
+  --font-display: "Manrope", sans-serif;
   --font-sans:    "Inter", system-ui, sans-serif;
-  --font-mono-ui: "Inter", system-ui, sans-serif; /* tracked uppercase labels */
+  --font-mono-ui: "IBM Plex Mono", monospace;
 }
 
 /* Tell Tailwind v4 that `.dark` on <html> activates the dark variant */
@@ -23,14 +26,17 @@
 
 /* Dark palette — same token names, overridden values */
 .dark {
-  --color-bg:            #0E0E10; /* near-black ink */
-  --color-surface:       #17171A; /* panels / alt sections */
-  --color-text:          #F2F1EC; /* paper white */
-  --color-text-muted:    #9B9B95;
-  --color-border:        #2A2A2E; /* hairline */
-  --color-border-strong: #F2F1EC; /* editorial rules / button borders */
-  --color-accent:        #6E85FF; /* lifted cobalt for dark bg */
-  --color-status:        #4FB27C; /* available green */
+  --color-bg:            #0B0C10;
+  --color-surface:       #14151C;
+  --color-surface-2:     #1B1C24;
+  --color-text:          #F2F2F5;
+  --color-text-muted:    #9A9BA8;
+  --color-border:        #24252E;
+  --color-border-strong: #32333E;
+  --color-accent:        #7A73FF;
+  --color-accent-deep:   #948EFF;
+  --color-accent-soft:   rgba(122, 115, 255, 0.14);
+  --color-status:        #4ADE80;
 }
 
 /*
@@ -123,6 +129,160 @@
   @media (prefers-reduced-motion: reduce) {
     .skeleton {
       animation: none;
+    }
+  }
+
+  /* Glassmorphism effects */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .dark .glass {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Glow effects */
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(30, 54, 201, 0.3);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .dark .glow-accent {
+    box-shadow: 0 0 20px rgba(110, 133, 255, 0.4);
+  }
+
+  .glow-accent:hover {
+    box-shadow: 0 0 30px rgba(30, 54, 201, 0.5);
+  }
+
+  .dark .glow-accent:hover {
+    box-shadow: 0 0 30px rgba(110, 133, 255, 0.6);
+  }
+
+  /* Staggered reveal animations */
+  @keyframes stagger-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .stagger-item {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: stagger-fade-in 0.6s ease forwards;
+  }
+
+  /* Fade in up animation for social widget */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.3s ease forwards;
+  }
+
+  /* Hover lift effect */
+  @keyframes hover-lift {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-4px); }
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hover-lift:hover {
+    animation: hover-lift 0.3s ease forwards;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .hover-lift:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Image zoom on hover */
+  .image-zoom {
+    overflow: hidden;
+  }
+
+  .image-zoom img {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .image-zoom:hover img {
+    transform: scale(1.08);
+  }
+
+  /* Smooth progress bar animation */
+  @keyframes progress-fill {
+    from {
+      width: 0%;
+    }
+  }
+
+  .progress-bar-fill {
+    animation: progress-fill 1.2s ease-out forwards;
+  }
+
+  /* Scale and glow on hover */
+  @keyframes scale-glow {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
+  .scale-glow {
+    transition: all 0.3s ease;
+  }
+
+  .scale-glow:hover {
+    animation: scale-glow 0.3s ease forwards;
+  }
+
+  /* Animated gradient text */
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .gradient-text {
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+  }
+
+  /* Parallax effect helper */
+  .parallax-container {
+    perspective: 1000px;
+  }
+
+  .parallax-item {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-item,
+    .animate-fade-in-up,
+    .hover-lift:hover,
+    .image-zoom:hover img,
+    .progress-bar-fill,
+    .scale-glow:hover,
+    .gradient-text {
+      animation: none !important;
+      transform: none !important;
     }
   }
 }

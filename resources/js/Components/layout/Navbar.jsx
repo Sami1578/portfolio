@@ -13,43 +13,32 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || isOpen
-          ? 'bg-bg/90 backdrop-blur border-b border-border'
-          : 'bg-bg/90 backdrop-blur border-b border-border md:bg-transparent md:backdrop-blur-none md:border-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+        scrolled || isOpen ? 'bg-bg/85 backdrop-blur-md border-border' : 'bg-bg/85 backdrop-blur-md border-transparent md:bg-transparent md:backdrop-blur-none'
       }`}
     >
       <Container>
         <div className="flex justify-between items-center h-20">
-          <Link
-            href="/"
-            className="font-display text-2xl tracking-[-0.01em] text-text"
-          >
+          <Link href="/" className="font-display text-xl font-extrabold tracking-tight text-text">
             {siteConfig.brandName}
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-10">
-            {siteConfig.navLinks.map((link, i) => (
+          <div className="hidden md:flex items-center gap-9">
+            {siteConfig.navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="group flex items-center gap-1.5 font-mono-ui text-xs uppercase tracking-[0.18em] text-text-muted hover:text-text transition-colors duration-200"
+                className="font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
               >
-                <span className="text-accent/70 group-hover:text-accent transition-colors">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
                 {link.name}
               </a>
             ))}
-            <Button href="#contact" variant="ghost" size="sm">
+            <Button href="#contact" variant="primary" size="sm">
               {siteConfig.ctaLabel}
             </Button>
             <ThemeToggle />
-
           </div>
 
-          {/* Mobile controls */}
           <div className="flex items-center gap-3 md:hidden">
             <ThemeToggle />
             <button
@@ -62,25 +51,19 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile nav */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ${
-            isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-        >
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="py-6 space-y-5 border-t border-border">
-            {siteConfig.navLinks.map((link, i) => (
+            {siteConfig.navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="flex items-center gap-3 font-mono-ui text-xs uppercase tracking-[0.18em] text-text-muted hover:text-text transition-colors duration-200"
+                className="block font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
                 onClick={() => setIsOpen(false)}
               >
-                <span className="text-accent/70">{String(i + 1).padStart(2, '0')}</span>
                 {link.name}
               </a>
             ))}
-            <Button href="#contact" variant="ghost" size="sm" className="w-full" onClick={() => setIsOpen(false)}>
+            <Button href="#contact" variant="primary" size="sm" className="w-full" onClick={() => setIsOpen(false)}>
               {siteConfig.ctaLabel}
             </Button>
           </div>
