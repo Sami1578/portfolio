@@ -5,6 +5,20 @@ import SectionHeader from '../../Components/ui/SectionHeader';
 import PostCard from '../../Components/blog/PostCard';
 
 export default function BlogIndex({ profile, whatsapp, socialLinks, posts = [] }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: `${profile.name} - Blog`,
+    description: 'Articles on Laravel, React, and full-stack development.',
+    blogPost: posts.map((post) => ({
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.excerpt,
+      url: `/posts/${post.slug}`,
+      datePublished: post.published_at,
+    })),
+  };
+
   return (
     <Layout
       title={`Blog - ${profile.name}`}
@@ -12,6 +26,7 @@ export default function BlogIndex({ profile, whatsapp, socialLinks, posts = [] }
       profile={profile}
       whatsapp={whatsapp}
       socialLinks={socialLinks}
+      jsonLd={jsonLd}
     >
       <section className="py-24 md:py-32 pt-40">
         <Container>

@@ -6,13 +6,34 @@ import CommentForm from '../../Components/blog/CommentForm';
 import CommentList from '../../Components/blog/CommentList';
 
 export default function BlogShow({ profile, whatsapp, socialLinks, post, comments = [], commenterEmail }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.meta_description,
+    image: post.featured_image_url ? [post.featured_image_url] : undefined,
+    datePublished: post.published_at,
+    dateModified: post.updated_at || post.published_at,
+    author: {
+      '@type': 'Person',
+      name: profile.name,
+    },
+    keywords: post.tech_tags?.join(', '),
+  };
+
   return (
     <Layout
       title={`${post.title} - ${profile.name}`}
-      description={post.excerpt}
+      description={post.meta_description}
       profile={profile}
       whatsapp={whatsapp}
       socialLinks={socialLinks}
+      type="article"
+      image={post.featured_image_url}
+      publishedTime={post.published_at}
+      modifiedTime={post.updated_at}
+      keywords={post.tech_tags}
+      jsonLd={jsonLd}
     >
       <article className="py-24 md:py-32 pt-40">
         <Container className="max-w-3xl">
@@ -58,7 +79,7 @@ export default function BlogShow({ profile, whatsapp, socialLinks, post, comment
           <div className="post-content mt-10" dangerouslySetInnerHTML={{ __html: post.content }} />
 
           <div className="mt-16 border-t border-border pt-12">
-            <CommentList comments={comments} />
+            <CommentList comments={comments} postSlug={post.slug ?? ''} commenterEmail={commenterEmail} />
           </div>
 
           <div className="mt-12 border-t border-border pt-12">

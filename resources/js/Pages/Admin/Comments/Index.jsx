@@ -31,6 +31,9 @@ export default function CommentsIndex({ comments = [], status = 'pending' }) {
         <div>
           <span className="text-text">{row.author_name}</span>
           <p className="text-xs text-text-muted">{row.author_email}</p>
+          {row.parent && (
+            <p className="mt-0.5 text-xs text-accent">↳ reply to {row.parent.author_name}</p>
+          )}
         </div>
       ),
     },

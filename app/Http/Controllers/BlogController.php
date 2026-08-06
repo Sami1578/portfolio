@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\PostView;
 use App\Services\PortfolioService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,11 +49,16 @@ class BlogController extends Controller
                 'excerpt' => $post->excerpt,
                 'content' => $post->content,
                 'featured_image_path' => $post->featured_image_path,
+                'featured_image_url' => $this->absoluteImageUrl($request, $post->featured_image_path),
+                'meta_description' => $post->excerpt ?: Str::limit(strip_tags($post->content), 160),
                 'tech_tags' => $post->tech_tags ?? [],
-                'published_at' => $post->published_at,
+                'published_at' => $post->published_at?->toIso8601String(),
+                'updated_at' => $post->updated_at?->toIso8601String(),
                 'view_count' => $post->view_count,
             ],
-            'comments' => $post->approvedComments()->get(['id', 'author_name', 'body', 'created_at']),
+            'comments' => $post->approvedComments()
+                ->with('approvedReplies:id,parent_id,author_name,body,created_at')
+                ->get(['id', 'author_name', 'body', 'created_at']),
             'commenterEmail' => session('commenter_email'),
         ]);
     }
@@ -69,6 +75,15 @@ class BlogController extends Controller
             'whatsapp' => $data['whatsapp'],
             'socialLinks' => $data['socialLinks'],
         ];
+    }
+
+    /**
+     * Built from the current request host rather than APP_URL so OG/Twitter
+     * image tags stay correct regardless of environment/port mismatches.
+     */
+    private function absoluteImageUrl(Request $request, ?string $path): ?string
+    {
+        return $path ? $request->getSchemeAndHttpHost() . '/storage/' . $path : null;
     }
 
     private function recordView(Request $request, Post $post): void

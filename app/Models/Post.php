@@ -73,7 +73,7 @@ class Post extends Model
 
     public function approvedComments(): HasMany
     {
-        return $this->comments()->where('status', 'approved')->latest();
+        return $this->comments()->whereNull('parent_id')->where('status', 'approved')->latest();
     }
 
     public function views(): HasMany

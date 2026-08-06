@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Inertia\Inertia;
@@ -92,7 +93,8 @@ class PostController extends Controller
 
         $path = $this->storeImage($request->file('image'), 'posts/content');
 
-        return response()->json(['url' => Storage::disk('public')->url($path)]);
+        // Relative URL avoids depending on APP_URL matching the actual serving host/port.
+        return response()->json(['url' => '/storage/' . $path]);
     }
 
     private function storeImage($file, string $directory): string
@@ -113,11 +115,10 @@ class PostController extends Controller
     private function extractContentImagePaths(string $content): array
     {
         preg_match_all('/<img[^>]+src="([^"]+)"/i', $content, $matches);
-        $storageUrl = rtrim(Storage::disk('public')->url(''), '/');
 
         return collect($matches[1] ?? [])
-            ->filter(fn ($src) => str_starts_with($src, $storageUrl))
-            ->map(fn ($src) => ltrim(str_replace($storageUrl, '', $src), '/'))
+            ->filter(fn ($src) => str_contains($src, '/storage/posts/'))
+            ->map(fn ($src) => Str::after($src, '/storage/'))
             ->all();
     }
 }

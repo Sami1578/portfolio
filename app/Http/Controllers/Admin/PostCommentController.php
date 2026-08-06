@@ -15,7 +15,7 @@ class PostCommentController extends Controller
     {
         $status = $request->query('status', 'pending');
 
-        $query = PostComment::with('post:id,title,slug')->latest();
+        $query = PostComment::with(['post:id,title,slug', 'parent:id,author_name'])->latest();
 
         if (in_array($status, ['pending', 'approved', 'rejected'], true)) {
             $query->where('status', $status);
