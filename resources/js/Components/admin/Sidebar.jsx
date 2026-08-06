@@ -9,6 +9,8 @@ import {
   Tags,
   Mail,
   Phone,
+  BookOpen,
+  MessageSquare,
 } from 'lucide-react';
 
 const nav = [
@@ -22,10 +24,17 @@ const nav = [
       { label: 'Projects', href: 'admin.projects.index', icon: FolderKanban },
       { label: 'Skill Categories', href: 'admin.skill-categories.index', icon: Tags },
       { label: 'Skills', href: 'admin.skills.index', icon: Layers },
+      { label: 'Blog Posts', href: 'admin.posts.index', icon: BookOpen },
       { label: 'Contact Details', href: 'admin.contact.edit', icon: Phone },
     ],
   },
-  { section: 'Inbox', items: [{ label: 'Messages', href: 'admin.messages.index', icon: Mail }] },
+  {
+    section: 'Inbox',
+    items: [
+      { label: 'Messages', href: 'admin.messages.index', icon: Mail },
+      { label: 'Comments', href: 'admin.comments.index', icon: MessageSquare },
+    ],
+  },
 ];
 
 export default function Sidebar({ onNavigate }) {
