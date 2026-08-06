@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import "react";
-import { L as Layout, C as Container } from "./Layout-Dc2wfF-X.js";
+import { L as Layout, C as Container } from "./Layout-CzD4VZjZ.js";
 import { S as SectionHeader } from "./SectionHeader-DR3FZHAX.js";
 import { Link } from "@inertiajs/react";
 import { Eye } from "lucide-react";

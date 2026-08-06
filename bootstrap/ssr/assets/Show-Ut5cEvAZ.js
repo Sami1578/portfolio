@@ -1,7 +1,7 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import { useState } from "react";
 import { Loader2, Send, MessageCircle, Reply, Eye } from "lucide-react";
-import { B as Button, L as Layout, C as Container } from "./Layout-Dc2wfF-X.js";
+import { B as Button, L as Layout, C as Container } from "./Layout-CzD4VZjZ.js";
 import { useForm } from "@inertiajs/react";
 import "./ThemeToggle-D0Maapqw.js";
 import "react-icons/fa";

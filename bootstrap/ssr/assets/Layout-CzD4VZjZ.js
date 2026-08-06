@@ -1,9 +1,9 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, usePage, Head } from "@inertiajs/react";
-import { X, Menu, MessageCircle } from "lucide-react";
+import { X, Menu, Plus, MessageCircle } from "lucide-react";
 import { T as ThemeToggle } from "./ThemeToggle-D0Maapqw.js";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
 function Container({ children, className = "" }) {
   return /* @__PURE__ */ jsx("div", { className: `max-w-6xl mx-auto px-6 sm:px-8 lg:px-10 ${className}`, children });
 }
@@ -133,37 +133,129 @@ function Footer({ profile }) {
 }
 function FloatingSocialDock({ socialLinks, whatsapp }) {
   const [mounted, setMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [transform, setTransform] = useState("perspective(600px) rotateX(0deg) rotateY(0deg)");
+  const [glare, setGlare] = useState({ opacity: 0, x: 50, y: 50 });
+  const cardRef = useRef(null);
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 300);
     return () => clearTimeout(t);
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (cardRef.current && !cardRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const findLink = (name) => socialLinks?.find((l) => l?.name?.toLowerCase() === name)?.href;
   const github = findLink("github");
   const linkedin = findLink("linkedin");
   const whatsappUrl = whatsapp?.phoneNumber && `https://wa.me/${whatsapp.phoneNumber}?text=${encodeURIComponent(whatsapp.defaultMessage || "Hello!")}`;
   const items = [
-    github && { key: "github", href: github, label: "GitHub", Icon: FaGithub, size: "sm" },
-    linkedin && { key: "linkedin", href: linkedin, label: "LinkedIn", Icon: FaLinkedin, size: "sm" },
-    whatsappUrl && { key: "whatsapp", href: whatsappUrl, label: "Chat on WhatsApp", Icon: MessageCircle, size: "lg" }
+    whatsappUrl && { key: "whatsapp", href: whatsappUrl, label: "WhatsApp", Icon: MessageCircle, color: "#25D366" },
+    linkedin && { key: "linkedin", href: linkedin, label: "LinkedIn", Icon: FaLinkedin, color: "#0A66C2" },
+    github && { key: "github", href: github, label: "GitHub", Icon: FaGithub, color: "#ffffff" }
   ].filter(Boolean);
   if (items.length === 0) return null;
-  return /* @__PURE__ */ jsx("div", { className: "fixed bottom-8 left-8 z-50 flex flex-col-reverse gap-3", children: items.map(({ key, href, label, Icon, size }, idx) => /* @__PURE__ */ jsxs(
-    "a",
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+    setTransform(`perspective(600px) rotateX(${(-y * 15).toFixed(2)}deg) rotateY(${(x * 15).toFixed(2)}deg) scale3d(1.05, 1.05, 1.05)`);
+    setGlare({
+      opacity: 0.3,
+      x: (e.clientX - rect.left) / rect.width * 100,
+      y: (e.clientY - rect.top) / rect.height * 100
+    });
+  };
+  const handleMouseLeave = () => {
+    setTransform("perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  };
+  return /* @__PURE__ */ jsxs(
+    "div",
     {
-      href,
-      target: "_blank",
-      rel: "noopener noreferrer",
-      "aria-label": label,
-      title: label,
-      className: `group relative flex items-center justify-center rounded-full shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-accent/30 ${size === "lg" ? "w-14 h-14 bg-text text-bg hover:bg-accent" : "w-11 h-11 bg-surface border border-border text-text-muted hover:text-accent hover:border-accent/40"} ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`,
-      style: { transitionDelay: `${idx * 90}ms` },
+      ref: cardRef,
+      className: `fixed bottom-8 left-8 z-50 flex flex-col items-center transition-all duration-500 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`,
       children: [
-        /* @__PURE__ */ jsx(Icon, { size: size === "lg" ? 24 : 18 }),
-        /* @__PURE__ */ jsx("span", { className: "pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded bg-text px-2.5 py-1 font-mono-ui text-[11px] uppercase tracking-[0.1em] text-bg opacity-0 transition-opacity duration-200 group-hover:opacity-100", children: label })
+        /* @__PURE__ */ jsxs(
+          "div",
+          {
+            onMouseMove: handleMouseMove,
+            onMouseLeave: handleMouseLeave,
+            style: {
+              transform,
+              transformStyle: "preserve-3d",
+              transition: "transform 0.15s ease-out, opacity 0.3s ease, visibility 0.3s"
+            },
+            className: `relative mb-4 rounded-2xl border border-white/10 bg-[#12131A]/90 p-3 shadow-2xl backdrop-blur-xl ${isOpen ? "visible opacity-100 scale-100" : "invisible opacity-0 scale-95 pointer-events-none"}`,
+            children: [
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "absolute -inset-1 rounded-2xl bg-accent/20 blur-lg opacity-50",
+                  style: { transform: "translateZ(-10px)" }
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "pointer-events-none absolute inset-0 z-20 rounded-2xl transition-opacity duration-300",
+                  style: {
+                    opacity: glare.opacity,
+                    background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.25) 0%, transparent 70%)`
+                  }
+                }
+              ),
+              /* @__PURE__ */ jsx("div", { className: "relative z-10 flex flex-col gap-3", style: { transformStyle: "preserve-3d" }, children: items.map(({ key, href, label, Icon, color }, idx) => /* @__PURE__ */ jsxs(
+                "a",
+                {
+                  href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  "aria-label": label,
+                  style: {
+                    transform: `translateZ(${15 + idx * 5}px)`,
+                    transitionDelay: `${isOpen ? idx * 50 : 0}ms`
+                  },
+                  className: "group relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/5 bg-white/[0.03] shadow-inner transition-all duration-300 hover:scale-110 hover:border-accent/40 hover:bg-white/[0.1]",
+                  children: [
+                    /* @__PURE__ */ jsx(Icon, { size: 20, style: { color }, className: "transition-transform duration-300 group-hover:scale-110" }),
+                    /* @__PURE__ */ jsx("span", { className: "pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded bg-text px-2.5 py-1.5 font-mono-ui text-[10px] uppercase tracking-[0.15em] text-bg opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100", children: label })
+                  ]
+                },
+                key
+              )) })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxs(
+          "button",
+          {
+            onClick: () => setIsOpen((prev) => !prev),
+            "aria-label": "Toggle Social Links",
+            className: "group relative flex h-14 w-14 items-center justify-center rounded-full bg-text text-bg shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-accent hover:text-white",
+            style: { transformStyle: "preserve-3d" },
+            children: [
+              /* @__PURE__ */ jsx("span", { className: "absolute -inset-1 rounded-full bg-accent/40 blur-md opacity-0 transition-opacity duration-300 group-hover:opacity-100" }),
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "relative z-10 transition-transform duration-500 ease-out",
+                  style: { transform: isOpen ? "rotate(135deg)" : "rotate(0deg)" },
+                  children: isOpen ? /* @__PURE__ */ jsx(X, { size: 22 }) : /* @__PURE__ */ jsx(Plus, { size: 22 })
+                }
+              )
+            ]
+          }
+        )
       ]
-    },
-    key
-  )) });
+    }
+  );
 }
 const SITE_ORIGIN = "https://samiahmed.dev";
 const OG_IMAGE = `${SITE_ORIGIN}/og-image.png`;

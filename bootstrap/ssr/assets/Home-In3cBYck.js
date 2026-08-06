@@ -1,6 +1,6 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
-import { useRef, useState, useEffect } from "react";
-import { C as Container, B as Button, L as Layout } from "./Layout-Dc2wfF-X.js";
+import { useState, useRef, useEffect } from "react";
+import { C as Container, B as Button, L as Layout } from "./Layout-CzD4VZjZ.js";
 import { ArrowRight, Smartphone, Database, Server, Code, ArrowLeft, Loader2, Send, MapPin, Phone, Mail } from "lucide-react";
 import { S as SectionHeader } from "./SectionHeader-DR3FZHAX.js";
 import { SiGit, SiDocker, SiMongodb, SiPostgresql, SiMysql, SiPython, SiNodedotjs, SiPhp, SiLaravel, SiJavascript, SiTailwindcss, SiVuedotjs, SiReact } from "react-icons/si";
@@ -11,6 +11,75 @@ function StatusDot({ active = true }) {
   return /* @__PURE__ */ jsxs("span", { className: "relative flex h-2 w-2", children: [
     active && /* @__PURE__ */ jsx("span", { className: "animate-ping absolute inline-flex h-full w-full rounded-full bg-status opacity-60" }),
     /* @__PURE__ */ jsx("span", { className: `relative inline-flex h-2 w-2 rounded-full ${active ? "bg-status" : "bg-text-muted"}` })
+  ] });
+}
+function TiltIDE({ children, className = "" }) {
+  const [transform, setTransform] = useState(
+    "perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0px)"
+  );
+  const [glare, setGlare] = useState({ opacity: 0, x: 50, y: 50 });
+  const containerRef = useRef(null);
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = (e.clientX - rect.left - width / 2) / (width / 2);
+    const mouseY = (e.clientY - rect.top - height / 2) / (height / 2);
+    const maxTiltX = 10;
+    const maxTiltY = 10;
+    const rotateX = -mouseY * maxTiltX;
+    const rotateY = mouseX * maxTiltY;
+    setTransform(
+      `perspective(1200px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`
+    );
+    const glareX = (e.clientX - rect.left) / width * 100;
+    const glareY = (e.clientY - rect.top) / height * 100;
+    setGlare({
+      opacity: 0.15,
+      x: glareX,
+      y: glareY
+    });
+  };
+  const handleMouseLeave = () => {
+    setTransform("perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  };
+  return /* @__PURE__ */ jsxs("div", { className: "relative group/tilt", children: [
+    /* @__PURE__ */ jsx(
+      "div",
+      {
+        className: "absolute -inset-1 rounded-2xl bg-gradient-to-r from-accent/30 via-accent-deep/20 to-accent/30 blur-xl opacity-40 group-hover/tilt:opacity-80 transition-opacity duration-500",
+        style: { transform: "translateZ(-20px)" }
+      }
+    ),
+    /* @__PURE__ */ jsxs(
+      "div",
+      {
+        ref: containerRef,
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+        style: {
+          transform,
+          transformStyle: "preserve-3d",
+          transition: "transform 0.15s ease-out, box-shadow 0.3s ease"
+        },
+        className: `relative rounded-2xl border border-border bg-surface shadow-2xl shadow-black/20 overflow-hidden text-left ${className}`,
+        children: [
+          /* @__PURE__ */ jsx(
+            "div",
+            {
+              className: "pointer-events-none absolute inset-0 z-20 transition-opacity duration-300",
+              style: {
+                opacity: glare.opacity,
+                background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.4) 0%, transparent 60%)`
+              }
+            }
+          ),
+          children
+        ]
+      }
+    )
   ] });
 }
 function useScrollReveal(options = { threshold: 0.15 }) {
@@ -69,13 +138,13 @@ function Hero({ profile }) {
       ] }),
       /* @__PURE__ */ jsx(Button, { href: "#contact", variant: "ghost", children: "Get in touch" })
     ] }),
-    /* @__PURE__ */ jsxs(
-      "div",
-      {
-        className: `${show()} mt-16 max-w-3xl mx-auto rounded-2xl border border-border bg-surface shadow-2xl shadow-black/10 overflow-hidden text-left`,
-        style: delayStyle(420),
-        children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 px-5 py-3 border-b border-border", children: [
+    /* @__PURE__ */ jsx("div", { className: `${show()} mt-16 max-w-3xl mx-auto`, style: delayStyle(420), children: /* @__PURE__ */ jsxs(TiltIDE, { children: [
+      /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "flex items-center gap-2 px-5 py-3 border-b border-border bg-surface relative z-10",
+          style: { transform: "translateZ(10px)", transformStyle: "preserve-3d" },
+          children: [
             /* @__PURE__ */ jsx("span", { className: "w-2.5 h-2.5 rounded-full bg-border-strong" }),
             /* @__PURE__ */ jsx("span", { className: "w-2.5 h-2.5 rounded-full bg-border-strong" }),
             /* @__PURE__ */ jsx("span", { className: "w-2.5 h-2.5 rounded-full bg-border-strong" }),
@@ -84,8 +153,15 @@ function Hero({ profile }) {
               profile.initials,
               "Service.php"
             ] })
-          ] }),
-          /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-[40px_1fr] gap-x-2 bg-[#0D0E14] px-5 py-6 font-mono-ui text-[13px] leading-8", children: [
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        "div",
+        {
+          className: "grid grid-cols-[40px_1fr] gap-x-2 bg-[#0D0E14] px-5 py-6 font-mono-ui text-[13px] leading-8 shadow-inner",
+          style: { transform: "translateZ(20px)", transformStyle: "preserve-3d" },
+          children: [
             /* @__PURE__ */ jsxs("div", { className: "text-right text-[#4A4C5C] select-none", children: [
               "1",
               /* @__PURE__ */ jsx("br", {}),
@@ -134,10 +210,10 @@ function Hero({ profile }) {
               "\n",
               "}"
             ] })
-          ] })
-        ]
-      }
-    ),
+          ]
+        }
+      )
+    ] }) }),
     /* @__PURE__ */ jsxs("div", { className: `${show()} mt-14 border-t border-border pt-8`, style: delayStyle(550), children: [
       /* @__PURE__ */ jsx("p", { className: "font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted mb-5", children: "Working daily with" }),
       /* @__PURE__ */ jsx("div", { className: "flex flex-wrap items-center justify-center gap-x-10 gap-y-3", children: profile.stack.map((tech, i) => /* @__PURE__ */ jsx("span", { className: "font-display font-bold text-lg text-text-muted/70 hover:text-text transition-colors duration-200", children: tech }, i)) })
@@ -182,16 +258,37 @@ function About({ about }) {
       ] }),
       /* @__PURE__ */ jsx("div", { className: "lg:col-span-7", children: /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-5", children: about.services.map((service, index) => {
         const Icon = ICONS$2[service?.icon] || Code;
-        return /* @__PURE__ */ jsxs(
+        return /* @__PURE__ */ jsx(
           "div",
           {
-            className: `group rounded-2xl border border-border bg-surface p-6 transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/10 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`,
+            className: `transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`,
             style: { transitionDelay: `${300 + index * 100}ms` },
-            children: [
-              /* @__PURE__ */ jsx("div", { className: "w-11 h-11 rounded-xl bg-accent-soft flex items-center justify-center mb-6", children: /* @__PURE__ */ jsx(Icon, { size: 20, className: "text-accent-deep transition-transform duration-300 group-hover:scale-110" }) }),
-              /* @__PURE__ */ jsx("h4", { className: "text-text font-semibold group-hover:text-accent transition-colors duration-300", children: service.title }),
-              /* @__PURE__ */ jsx("p", { className: "mt-2 text-text-muted text-sm leading-relaxed", children: service.description })
-            ]
+            children: /* @__PURE__ */ jsxs(TiltIDE, { className: "p-6 h-full hover:border-accent/40 transition-colors duration-300", children: [
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "w-11 h-11 rounded-xl bg-accent-soft flex items-center justify-center mb-6 shadow-sm",
+                  style: { transform: "translateZ(15px)", transformStyle: "preserve-3d" },
+                  children: /* @__PURE__ */ jsx(Icon, { size: 20, className: "text-accent-deep transition-transform duration-300 group-hover:scale-110" })
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "h4",
+                {
+                  className: "text-text font-semibold group-hover:text-accent transition-colors duration-300",
+                  style: { transform: "translateZ(10px)" },
+                  children: service.title
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "p",
+                {
+                  className: "mt-2 text-text-muted text-sm leading-relaxed",
+                  style: { transform: "translateZ(5px)" },
+                  children: service.description
+                }
+              )
+            ] })
           },
           index
         );
@@ -240,7 +337,7 @@ function Skills({ categories }) {
     /* @__PURE__ */ jsxs(
       "div",
       {
-        className: "relative mb-16 select-none",
+        className: "relative mb-16 select-none py-4",
         style: {
           maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
           WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)"
@@ -251,21 +348,35 @@ function Skills({ categories }) {
           /* @__PURE__ */ jsx(
             "div",
             {
-              className: "flex w-max gap-14 py-2",
+              className: "flex w-max gap-8 py-2",
               style: {
                 animation: "skills-marquee 28s linear infinite",
                 animationPlayState: marqueePaused ? "paused" : "running"
               },
               children: marqueeSkills.map((skill, idx) => {
                 const Icon = ICONS$1[skill.icon];
-                return /* @__PURE__ */ jsxs(
+                return /* @__PURE__ */ jsx(
                   "div",
                   {
-                    className: "flex items-center gap-2.5 shrink-0 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300",
-                    children: [
-                      Icon && /* @__PURE__ */ jsx(Icon, { size: 22, style: { color: skill.color } }),
-                      /* @__PURE__ */ jsx("span", { className: "font-mono-ui text-xs uppercase tracking-[0.14em] text-text-muted whitespace-nowrap", children: skill.name })
-                    ]
+                    className: "group/badge shrink-0 cursor-pointer transition-transform duration-300 hover:scale-110",
+                    children: /* @__PURE__ */ jsxs(
+                      "div",
+                      {
+                        className: "flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-2.5 shadow-md transition-all duration-300 group-hover/badge:border-accent/40 group-hover/badge:shadow-lg group-hover/badge:shadow-accent/10",
+                        style: { transformStyle: "preserve-3d" },
+                        children: [
+                          Icon && /* @__PURE__ */ jsx(
+                            Icon,
+                            {
+                              size: 20,
+                              className: "transition-transform duration-300 group-hover/badge:scale-125 group-hover/badge:rotate-6",
+                              style: { color: skill.color }
+                            }
+                          ),
+                          /* @__PURE__ */ jsx("span", { className: "font-mono-ui text-xs font-semibold uppercase tracking-[0.14em] text-text-muted group-hover/badge:text-text transition-colors duration-200 whitespace-nowrap", children: skill.name })
+                        ]
+                      }
+                    )
                   },
                   `${skill.name}-${idx}`
                 );
@@ -284,46 +395,67 @@ function Skills({ categories }) {
         ]
       }
     ),
-    /* @__PURE__ */ jsx(Container, { children: /* @__PURE__ */ jsx("div", { ref, className: `reveal ${isVisible ? "is-visible" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6`, children: categories.map((category, index) => /* @__PURE__ */ jsxs(
+    /* @__PURE__ */ jsx(Container, { children: /* @__PURE__ */ jsx("div", { ref, className: `reveal ${isVisible ? "is-visible" : ""} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6`, children: categories.map((category, index) => /* @__PURE__ */ jsx(
       "div",
       {
-        className: `group rounded-2xl border border-border bg-surface p-6 shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-xl hover:shadow-accent/10 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`,
+        className: `transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`,
         style: { transitionDelay: `${index * 100}ms` },
-        children: [
-          /* @__PURE__ */ jsxs("div", { className: "flex items-baseline justify-between mb-7", children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted group-hover:text-accent transition-colors duration-300", children: category.title }),
-            /* @__PURE__ */ jsx("span", { className: "font-mono-ui text-[11px] text-accent-deep bg-accent-soft px-1.5 py-0.5 rounded-full", children: String(index + 1).padStart(2, "0") })
-          ] }),
-          /* @__PURE__ */ jsx("ul", { className: "flex flex-col gap-5", children: category.skills.map((skill, skillIndex) => {
-            const Icon = ICONS$1[skill.icon];
-            const width = levelToWidth(skill.level);
-            return /* @__PURE__ */ jsxs("li", { className: "group/skill", children: [
-              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-2", children: [
-                Icon && /* @__PURE__ */ jsx(
-                  Icon,
-                  {
-                    size: 17,
-                    className: "shrink-0 transition-transform duration-300 group-hover/skill:scale-125",
-                    style: { color: skill.color }
-                  }
-                ),
-                /* @__PURE__ */ jsx("span", { className: "text-text text-sm font-medium leading-snug group-hover/skill:text-accent transition-colors duration-300", children: skill.name }),
-                /* @__PURE__ */ jsx("span", { className: "ml-auto text-[10px] font-mono-ui text-text-muted tracking-[0.1em] uppercase", children: skill.level })
-              ] }),
-              /* @__PURE__ */ jsx("div", { className: "h-1 w-full rounded-full bg-border overflow-hidden", children: /* @__PURE__ */ jsx(
-                "div",
-                {
-                  className: "h-full rounded-full bg-accent transition-all ease-out",
-                  style: {
-                    width: isVisible ? `${width}%` : "0%",
-                    transitionDuration: "900ms",
-                    transitionDelay: `${300 + index * 100 + skillIndex * 80}ms`
-                  }
-                }
-              ) })
-            ] }, skillIndex);
-          }) })
-        ]
+        children: /* @__PURE__ */ jsxs(TiltIDE, { className: "p-6 h-full border border-border bg-surface hover:border-accent/40 transition-colors duration-300", children: [
+          /* @__PURE__ */ jsxs(
+            "div",
+            {
+              className: "flex items-baseline justify-between mb-7",
+              style: { transform: "translateZ(15px)", transformStyle: "preserve-3d" },
+              children: [
+                /* @__PURE__ */ jsx("h3", { className: "font-mono-ui text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted group-hover:text-accent transition-colors duration-300", children: category.title }),
+                /* @__PURE__ */ jsx("span", { className: "font-mono-ui text-[11px] text-accent-deep bg-accent-soft px-1.5 py-0.5 rounded-full shadow-sm", children: String(index + 1).padStart(2, "0") })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsx(
+            "ul",
+            {
+              className: "flex flex-col gap-5",
+              style: { transform: "translateZ(10px)", transformStyle: "preserve-3d" },
+              children: category.skills.map((skill, skillIndex) => {
+                const Icon = ICONS$1[skill.icon];
+                const width = levelToWidth(skill.level);
+                return /* @__PURE__ */ jsxs("li", { className: "group/skill", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 mb-2", children: [
+                    Icon && /* @__PURE__ */ jsx(
+                      Icon,
+                      {
+                        size: 17,
+                        className: "shrink-0 transition-transform duration-300 group-hover/skill:scale-125",
+                        style: { color: skill.color }
+                      }
+                    ),
+                    /* @__PURE__ */ jsx("span", { className: "text-text text-sm font-medium leading-snug group-hover/skill:text-accent transition-colors duration-300", children: skill.name }),
+                    /* @__PURE__ */ jsx("span", { className: "ml-auto text-[10px] font-mono-ui text-text-muted tracking-[0.1em] uppercase", children: skill.level })
+                  ] }),
+                  /* @__PURE__ */ jsx(
+                    "div",
+                    {
+                      className: "h-1 w-full rounded-full bg-border overflow-hidden shadow-inner",
+                      style: { transform: "translateZ(5px)" },
+                      children: /* @__PURE__ */ jsx(
+                        "div",
+                        {
+                          className: "h-full rounded-full bg-accent transition-all ease-out",
+                          style: {
+                            width: isVisible ? `${width}%` : "0%",
+                            transitionDuration: "900ms",
+                            transitionDelay: `${300 + index * 100 + skillIndex * 80}ms`
+                          }
+                        }
+                      )
+                    }
+                  )
+                ] }, skillIndex);
+              })
+            }
+          )
+        ] })
       },
       index
     )) }) })
@@ -361,31 +493,54 @@ function Projects({ projects }) {
       }
     ),
     /* @__PURE__ */ jsxs("div", { ref, className: `reveal ${isVisible ? "is-visible" : ""}`, children: [
-      /* @__PURE__ */ jsx("div", { className: "overflow-hidden rounded-2xl border border-border", onTouchStart: handleTouchStart, onTouchEnd: handleTouchEnd, children: /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsx("div", { className: "overflow-hidden rounded-2xl border border-border shadow-2xl shadow-black/5", onTouchStart: handleTouchStart, onTouchEnd: handleTouchEnd, children: /* @__PURE__ */ jsx(
         "div",
         {
           className: "flex transition-transform duration-500 ease-out",
           style: { transform: `translateX(-${currentIndex * 100}%)` },
-          children: projects.map((project, pIdx) => /* @__PURE__ */ jsxs("article", { className: "w-full shrink-0 bg-surface grid grid-cols-1 lg:grid-cols-2", children: [
-            /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-accent-soft to-surface-2 p-10 flex items-center justify-center", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-sm rounded-xl bg-surface border border-border shadow-lg shadow-accent/10 p-6", children: [
-              /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5", children: [
-                /* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-status animate-pulse" }),
-                project.architecture_tag || "System Architecture"
-              ] }),
-              project.stats?.map((stat, idx) => /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between py-3 border-b border-border last:border-none text-sm", children: [
-                /* @__PURE__ */ jsx("span", { className: "text-text-muted", children: stat.label }),
-                /* @__PURE__ */ jsx("span", { className: "font-display font-bold text-accent-deep", children: stat.value })
-              ] }, idx))
+          children: projects.map((project) => /* @__PURE__ */ jsxs("article", { className: "w-full shrink-0 bg-surface grid grid-cols-1 lg:grid-cols-2", children: [
+            /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-accent-soft via-surface-2 to-surface-2 p-8 lg:p-12 flex items-center justify-center", children: /* @__PURE__ */ jsxs(TiltIDE, { className: "w-full max-w-sm border border-border bg-surface p-6", children: [
+              /* @__PURE__ */ jsxs(
+                "div",
+                {
+                  className: "flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5",
+                  style: { transform: "translateZ(15px)" },
+                  children: [
+                    /* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-status animate-pulse" }),
+                    project.architecture_tag || "System Architecture"
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "space-y-1",
+                  style: { transform: "translateZ(10px)", transformStyle: "preserve-3d" },
+                  children: project.stats?.map((stat, idx) => /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between py-3 border-b border-border last:border-none text-sm", children: [
+                    /* @__PURE__ */ jsx("span", { className: "text-text-muted", children: stat.label }),
+                    /* @__PURE__ */ jsx("span", { className: "font-display font-bold text-accent-deep", children: stat.value })
+                  ] }, idx))
+                }
+              )
             ] }) }),
-            /* @__PURE__ */ jsxs("div", { className: "p-10 lg:p-12", children: [
-              project.subtitle && /* @__PURE__ */ jsx("span", { className: "inline-block font-mono-ui text-[11px] font-semibold text-accent-deep bg-accent-soft px-2.5 py-1 rounded-full mb-5", children: project.subtitle }),
-              /* @__PURE__ */ jsx("h3", { className: "font-display text-2xl md:text-3xl font-extrabold tracking-tight text-text text-balance", children: project.title }),
-              /* @__PURE__ */ jsx("p", { className: "mt-4 text-text-muted leading-relaxed", children: project.description }),
+            /* @__PURE__ */ jsxs("div", { className: "p-10 lg:p-12 flex flex-col justify-center", children: [
+              /* @__PURE__ */ jsxs("div", { children: [
+                project.subtitle && /* @__PURE__ */ jsx("span", { className: "inline-block font-mono-ui text-[11px] font-semibold text-accent-deep bg-accent-soft px-2.5 py-1 rounded-full mb-5 shadow-sm", children: project.subtitle }),
+                /* @__PURE__ */ jsx("h3", { className: "font-display text-2xl md:text-3xl font-extrabold tracking-tight text-text text-balance", children: project.title }),
+                /* @__PURE__ */ jsx("p", { className: "mt-4 text-text-muted leading-relaxed", children: project.description })
+              ] }),
               project.highlights && project.highlights.length > 0 && /* @__PURE__ */ jsx("ul", { className: "mt-6 space-y-2.5", children: project.highlights.slice(0, 4).map((point, idx) => /* @__PURE__ */ jsxs("li", { className: "flex items-start gap-2.5 text-sm text-text", children: [
                 /* @__PURE__ */ jsx("span", { className: "text-accent mt-0.5", children: "→" }),
                 /* @__PURE__ */ jsx("span", { className: "leading-snug", children: point })
               ] }, idx)) }),
-              project.tech_stack && project.tech_stack.length > 0 && /* @__PURE__ */ jsx("div", { className: "mt-7 flex flex-wrap gap-2", children: project.tech_stack.map((tech, idx) => /* @__PURE__ */ jsx("span", { className: "font-mono-ui text-[11px] uppercase tracking-[0.08em] text-text-muted bg-surface-2 border border-border px-2.5 py-1 rounded-md", children: tech }, idx)) })
+              project.tech_stack && project.tech_stack.length > 0 && /* @__PURE__ */ jsx("div", { className: "mt-8 flex flex-wrap gap-2", children: project.tech_stack.map((tech, idx) => /* @__PURE__ */ jsx(
+                "span",
+                {
+                  className: "font-mono-ui text-[11px] uppercase tracking-[0.08em] text-text-muted bg-surface-2 border border-border px-3 py-1.5 rounded-md shadow-sm transition-all duration-200 hover:scale-105 hover:border-accent/40 hover:text-text cursor-default",
+                  children: tech
+                },
+                idx
+              )) })
             ] })
           ] }, project.id))
         }
@@ -526,34 +681,55 @@ function Contact({ contactInfo, socialLinks }) {
               ] }) })
             ] })
           ] }),
-          /* @__PURE__ */ jsxs("div", { className: "lg:col-span-5", children: [
-            /* @__PURE__ */ jsx("h3", { className: "font-display text-2xl font-bold text-white mb-8", children: "Contact information" }),
-            /* @__PURE__ */ jsx("div", { className: "space-y-1", children: contactInfo?.map((info, index) => {
-              const Icon = ICONS[info?.icon] || Mail;
-              const content = /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 py-4 border-b border-white/10 group", children: [
-                /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0", children: /* @__PURE__ */ jsx(Icon, { className: "text-accent", size: 17 }) }),
-                /* @__PURE__ */ jsxs("div", { children: [
-                  /* @__PURE__ */ jsx("p", { className: "text-white/40 text-[11px] font-mono-ui uppercase tracking-[0.12em]", children: info?.label }),
-                  /* @__PURE__ */ jsx("p", { className: "text-white text-sm mt-0.5 group-hover:text-accent transition-colors duration-200", children: info?.value })
-                ] })
-              ] });
-              return info?.href ? /* @__PURE__ */ jsx("a", { href: info.href, children: content }, index) : /* @__PURE__ */ jsx("div", { children: content }, index);
-            }) }),
-            socialLinks && socialLinks.length > 0 && /* @__PURE__ */ jsxs("div", { className: "mt-10", children: [
-              /* @__PURE__ */ jsx("h4", { className: "font-mono-ui text-[11px] uppercase tracking-[0.16em] text-white/40 mb-4", children: "Social links" }),
-              /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-3", children: socialLinks.map((link, idx) => /* @__PURE__ */ jsx(
-                "a",
-                {
-                  href: link.href,
-                  target: "_blank",
-                  rel: "noreferrer",
-                  className: "font-mono-ui text-xs uppercase tracking-[0.1em] text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition-colors duration-200",
-                  children: link.name
-                },
-                idx
-              )) })
-            ] })
-          ] })
+          /* @__PURE__ */ jsx("div", { className: "lg:col-span-5", children: /* @__PURE__ */ jsxs(TiltIDE, { className: "p-8 border border-white/10 bg-white/[0.02] h-full", children: [
+            /* @__PURE__ */ jsx(
+              "h3",
+              {
+                className: "font-display text-2xl font-bold text-white mb-8",
+                style: { transform: "translateZ(15px)", transformStyle: "preserve-3d" },
+                children: "Contact information"
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "div",
+              {
+                className: "space-y-1",
+                style: { transform: "translateZ(10px)", transformStyle: "preserve-3d" },
+                children: contactInfo?.map((info, index) => {
+                  const Icon = ICONS[info?.icon] || Mail;
+                  const content = /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-4 py-4 border-b border-white/10 group", children: [
+                    /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0 shadow-inner", children: /* @__PURE__ */ jsx(Icon, { className: "text-accent", size: 17 }) }),
+                    /* @__PURE__ */ jsxs("div", { children: [
+                      /* @__PURE__ */ jsx("p", { className: "text-white/40 text-[11px] font-mono-ui uppercase tracking-[0.12em]", children: info?.label }),
+                      /* @__PURE__ */ jsx("p", { className: "text-white text-sm mt-0.5 group-hover:text-accent transition-colors duration-200", children: info?.value })
+                    ] })
+                  ] });
+                  return info?.href ? /* @__PURE__ */ jsx("a", { href: info.href, children: content }, index) : /* @__PURE__ */ jsx("div", { children: content }, index);
+                })
+              }
+            ),
+            socialLinks && socialLinks.length > 0 && /* @__PURE__ */ jsxs(
+              "div",
+              {
+                className: "mt-10",
+                style: { transform: "translateZ(15px)", transformStyle: "preserve-3d" },
+                children: [
+                  /* @__PURE__ */ jsx("h4", { className: "font-mono-ui text-[11px] uppercase tracking-[0.16em] text-white/40 mb-4", children: "Social links" }),
+                  /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-3", children: socialLinks.map((link, idx) => /* @__PURE__ */ jsx(
+                    "a",
+                    {
+                      href: link.href,
+                      target: "_blank",
+                      rel: "noreferrer",
+                      className: "font-mono-ui text-xs uppercase tracking-[0.1em] text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full transition-all duration-200 hover:scale-105",
+                      children: link.name
+                    },
+                    idx
+                  )) })
+                ]
+              }
+            )
+          ] }) })
         ]
       }
     )
