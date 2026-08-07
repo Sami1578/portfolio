@@ -6,17 +6,14 @@ import json
 from openai import OpenAI
 
 # Load Environment Variables
-# NOTE: GitHub Models was fully retired on July 30, 2026 — the old
-# models.inference.ai.azure.com endpoint no longer works for anyone,
-# regardless of token. Migrated to Google AI Studio's free Gemini tier,
-# which exposes an OpenAI-compatible endpoint (only base_url, api_key,
-# and model changed below).
+# Gemini API via Google's OpenAI-compatible endpoint.
+# The model is selected below in the chat completion request.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
 
-# Initialize OpenAI client pointing to Google AI Studio's Gemini API
+# Initialize OpenAI client pointing to Google's Gemini API
 client = OpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     api_key=GEMINI_API_KEY,
@@ -74,8 +71,7 @@ def generate_and_post():
             {"role": "system", "content": "You are an expert technical blog writer who responds strictly in JSON."},
             {"role": "user", "content": prompt},
         ],
-        model="gemini-2.5-flash",
-        temperature=0.7,
+        model="gemini-3.5-flash-lite",
         response_format={"type": "json_object"}
     )
 
