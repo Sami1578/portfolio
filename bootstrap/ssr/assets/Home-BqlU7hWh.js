@@ -461,6 +461,60 @@ function Skills({ categories }) {
     )) }) })
   ] });
 }
+function FlipCard3D({ front, back, className = "" }) {
+  const [flipped, setFlipped] = useState(false);
+  const toggle = () => setFlipped((f) => !f);
+  return /* @__PURE__ */ jsxs(
+    "div",
+    {
+      className: `group/flip relative cursor-pointer select-none ${className}`,
+      style: { perspective: "1200px" },
+      onClick: toggle,
+      role: "button",
+      tabIndex: 0,
+      "aria-pressed": flipped,
+      "aria-label": "Flip card",
+      onKeyDown: (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      },
+      children: [
+        /* @__PURE__ */ jsxs(
+          "div",
+          {
+            className: "relative w-full transition-transform duration-700",
+            style: {
+              transformStyle: "preserve-3d",
+              transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+              transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)"
+            },
+            children: [
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "w-full rounded-2xl border border-border bg-surface shadow-xl shadow-black/10 overflow-hidden",
+                  style: { backfaceVisibility: "hidden" },
+                  children: front
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "absolute inset-0 w-full h-full rounded-2xl border border-border bg-surface shadow-xl shadow-black/10 overflow-hidden",
+                  style: { backfaceVisibility: "hidden", transform: "rotateY(180deg)" },
+                  children: back
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsx("span", { className: "absolute bottom-3 right-3 z-10 font-mono-ui text-[10px] uppercase tracking-[0.12em] text-text-muted/60 group-hover/flip:text-accent transition-colors pointer-events-none", children: flipped ? "← back" : "tap to flip →" })
+      ]
+    }
+  );
+}
 const SWIPE_THRESHOLD = 50;
 function Projects({ projects }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -499,30 +553,26 @@ function Projects({ projects }) {
           className: "flex transition-transform duration-500 ease-out",
           style: { transform: `translateX(-${currentIndex * 100}%)` },
           children: projects.map((project) => /* @__PURE__ */ jsxs("article", { className: "w-full shrink-0 bg-surface grid grid-cols-1 lg:grid-cols-2", children: [
-            /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-accent-soft via-surface-2 to-surface-2 p-8 lg:p-12 flex items-center justify-center", children: /* @__PURE__ */ jsxs(TiltIDE, { className: "w-full max-w-sm border border-border bg-surface p-6", children: [
-              /* @__PURE__ */ jsxs(
-                "div",
-                {
-                  className: "flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5",
-                  style: { transform: "translateZ(15px)" },
-                  children: [
+            /* @__PURE__ */ jsx("div", { className: "bg-gradient-to-br from-accent-soft via-surface-2 to-surface-2 p-8 lg:p-12 flex items-center justify-center", children: /* @__PURE__ */ jsx(
+              FlipCard3D,
+              {
+                className: "w-full max-w-sm",
+                front: /* @__PURE__ */ jsxs("div", { className: "p-6", children: [
+                  /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5", children: [
                     /* @__PURE__ */ jsx("span", { className: "w-1.5 h-1.5 rounded-full bg-status animate-pulse" }),
                     project.architecture_tag || "System Architecture"
-                  ]
-                }
-              ),
-              /* @__PURE__ */ jsx(
-                "div",
-                {
-                  className: "space-y-1",
-                  style: { transform: "translateZ(10px)", transformStyle: "preserve-3d" },
-                  children: project.stats?.map((stat, idx) => /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between py-3 border-b border-border last:border-none text-sm", children: [
+                  ] }),
+                  /* @__PURE__ */ jsx("div", { className: "space-y-1", children: project.stats?.map((stat, idx) => /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between py-3 border-b border-border last:border-none text-sm", children: [
                     /* @__PURE__ */ jsx("span", { className: "text-text-muted", children: stat.label }),
                     /* @__PURE__ */ jsx("span", { className: "font-display font-bold text-accent-deep", children: stat.value })
-                  ] }, idx))
-                }
-              )
-            ] }) }),
+                  ] }, idx)) })
+                ] }),
+                back: /* @__PURE__ */ jsxs("div", { className: "p-6 h-full flex flex-col justify-center", children: [
+                  /* @__PURE__ */ jsx("p", { className: "font-mono-ui text-[11px] uppercase tracking-[0.16em] text-accent-deep mb-3", children: "Why it mattered" }),
+                  /* @__PURE__ */ jsx("p", { className: "text-text text-sm leading-relaxed", children: project.highlights?.[0] || project.description })
+                ] })
+              }
+            ) }),
             /* @__PURE__ */ jsxs("div", { className: "p-10 lg:p-12 flex flex-col justify-center", children: [
               /* @__PURE__ */ jsxs("div", { children: [
                 project.subtitle && /* @__PURE__ */ jsx("span", { className: "inline-block font-mono-ui text-[11px] font-semibold text-accent-deep bg-accent-soft px-2.5 py-1 rounded-full mb-5 shadow-sm", children: project.subtitle }),
@@ -618,7 +668,7 @@ const FIELDS = [
   { id: "email", label: "Your email", type: "email", placeholder: "john@example.com" },
   { id: "subject", label: "Subject", type: "text", placeholder: "Project discussion" }
 ];
-const inputClasses = "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-accent focus:bg-white/[0.07] transition-colors duration-300";
+const inputClasses = "w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-accent focus:bg-white/[0.07] focus:scale-[1.02] focus:-translate-y-0.5 focus:shadow-lg focus:shadow-accent/20 transition-all duration-300";
 function Contact({ contactInfo, socialLinks }) {
   const { formData, handleChange, handleSubmit, isSubmitting, submitted, error } = useContactForm();
   const { ref, isVisible } = useScrollReveal();
