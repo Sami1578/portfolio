@@ -62,13 +62,13 @@ def generate_and_post():
     Ensure content is clean HTML compatible with rich text sanitizers.
     """
 
-    # Call gemini-2.5-flash-lite with exponential retry backoff
+    # Call gemini-1.5-flash with exponential retry backoff
     max_retries = 3
     response = None
     for attempt in range(max_retries):
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-flash-lite",
+                model="gemini-1.5-flash",
                 contents=prompt,
             )
             break
