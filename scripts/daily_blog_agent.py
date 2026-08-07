@@ -1,20 +1,21 @@
 import os
 import random
 import re
-import time
 import requests
 import json
-from google import genai
-from google.genai import errors
+from openai import OpenAI
 
-# Load Config
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Load Environment Variables
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
 
-# Initialize GenAI Client
-client = genai.Client(api_key=GEMINI_API_KEY)
+# Initialize OpenAI client pointing to GitHub's inference API
+client = OpenAI(
+    base_url="https://models.inference.ai.azure.com",
+    api_key=GITHUB_TOKEN,
+)
 
 TECH_STACKS = [
     ["Laravel", "Vue.js", "TailwindCSS"],
@@ -38,7 +39,7 @@ def fetch_unsplash_image(query):
             profile_link = photo["user"]["links"]["html"]
             return url, photographer, profile_link
     except Exception as e:
-        print(f"Error fetching image: {e}")
+        print(f"Unsplash error (non-fatal): {e}")
     return None, None, None
 
 def generate_and_post():
@@ -46,7 +47,7 @@ def generate_and_post():
     main_tech = selected_stack[0]
     secondary_tech = selected_stack[1]
 
-    # Fetch images
+    # Fetch Unsplash images
     featured_url, feat_author, feat_link = fetch_unsplash_image(f"{main_tech} code web development")
     inline_url, inline_author, inline_link = fetch_unsplash_image(f"{secondary_tech} programming software")
 
@@ -62,29 +63,21 @@ def generate_and_post():
     Ensure content is clean HTML compatible with rich text sanitizers.
     """
 
-    # Call gemini-1.5-flash with exponential retry backoff
-    max_retries = 3
-    response = None
-    for attempt in range(max_retries):
-        try:
-            response = client.models.generate_content(
-                model="gemini-1.5-flash",
-                contents=prompt,
-            )
-            break
-        except errors.ClientError as e:
-            if "429" in str(e) and attempt < max_retries - 1:
-                wait_time = (attempt + 1) * 15
-                print(f"Rate limited (429). Retrying in {wait_time}s...")
-                time.sleep(wait_time)
-            else:
-                raise e
+    # Generate content using GitHub Models (gpt-4o-mini)
+    response = client.chat.completions.create(
+        messages=[
+            {"role": "system", "content": "You are an expert technical blog writer who responds strictly in JSON."},
+            {"role": "user", "content": prompt},
+        ],
+        model="gpt-4o-mini",
+        temperature=0.7,
+        response_format={"type": "json_object"}
+    )
 
-    raw_text = response.text.strip()
-    clean_json = re.sub(r"^```json\s*|\s*```$", "", raw_text, flags=re.MULTILINE)
-    post_data = json.loads(clean_json)
+    raw_text = response.choices[0].message.content.strip()
+    post_data = json.loads(raw_text)
 
-    # Build inline image tag with attribution
+    # Build inline image HTML
     inline_image_html = ""
     if inline_url:
         inline_image_html = f"""
@@ -112,7 +105,7 @@ def generate_and_post():
     }
 
     res = requests.post(BLOG_API_URL, json=payload, headers=headers, timeout=60)
-    print(f"Status: {res.status_code}, Payload: {res.text}")
+    print(f"Status: {res.status_code}, Response: {res.text}")
 
 if __name__ == "__main__":
     generate_and_post()

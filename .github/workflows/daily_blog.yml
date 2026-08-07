@@ -2,15 +2,15 @@ name: Daily AI Blog Publisher
 
 on:
   schedule:
-    # Runs every day at 09:00 UTC (14:00 PKT)
-    - cron: '0 9 * * *'
-  workflow_dispatch: # Allows manual trigger testing from the Actions tab
+    - cron: '0 8 * * *' # Runs daily at 8:00 AM UTC
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
   publish-post:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,11 +20,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install google-genai requests
+          pip install openai requests
 
       - name: Run Blog Generator Script
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           BLOG_API_URL: ${{ secrets.BLOG_API_URL }}
           BLOG_AUTOMATION_KEY: ${{ secrets.BLOG_AUTOMATION_KEY }}
