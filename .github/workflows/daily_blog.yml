@@ -24,7 +24,7 @@ jobs:
 
       - name: Run Blog Generator Script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           BLOG_API_URL: ${{ secrets.BLOG_API_URL }}
           BLOG_AUTOMATION_KEY: ${{ secrets.BLOG_AUTOMATION_KEY }}

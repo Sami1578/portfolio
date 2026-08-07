@@ -6,15 +6,20 @@ import json
 from openai import OpenAI
 
 # Load Environment Variables
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+# NOTE: GitHub Models was fully retired on July 30, 2026 — the old
+# models.inference.ai.azure.com endpoint no longer works for anyone,
+# regardless of token. Migrated to Google AI Studio's free Gemini tier,
+# which exposes an OpenAI-compatible endpoint (only base_url, api_key,
+# and model changed below).
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
 
-# Initialize OpenAI client pointing to GitHub's inference API
+# Initialize OpenAI client pointing to Google AI Studio's Gemini API
 client = OpenAI(
-    base_url="https://models.inference.ai.azure.com",
-    api_key=GITHUB_TOKEN,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    api_key=GEMINI_API_KEY,
 )
 
 TECH_STACKS = [
@@ -63,18 +68,22 @@ def generate_and_post():
     Ensure content is clean HTML compatible with rich text sanitizers.
     """
 
-    # Generate content using GitHub Models (gpt-4o-mini)
+    # Generate content using Google AI Studio's free Gemini tier
     response = client.chat.completions.create(
         messages=[
             {"role": "system", "content": "You are an expert technical blog writer who responds strictly in JSON."},
             {"role": "user", "content": prompt},
         ],
-        model="gpt-4o-mini",
+        model="gemini-2.5-flash",
         temperature=0.7,
         response_format={"type": "json_object"}
     )
 
     raw_text = response.choices[0].message.content.strip()
+
+    # Gemini's OpenAI-compat layer occasionally wraps JSON in ```json fences
+    # even when response_format is set — strip them defensively.
+    raw_text = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text.strip())
     post_data = json.loads(raw_text)
 
     # Build inline image HTML
