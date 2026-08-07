@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Sami Ahmed'),
 
+    'blog_automation_key' => env('BLOG_AUTOMATION_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

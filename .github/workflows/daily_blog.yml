@@ -1,0 +1,31 @@
+name: Daily AI Blog Publisher
+
+on:
+  schedule:
+    # Runs every day at 09:00 UTC (14:00 PKT)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allows manual trigger testing from the Actions tab
+
+jobs:
+  publish-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install google-generativeai requests
+
+      - name: Run Blog Generator Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          BLOG_API_URL: ${{ secrets.BLOG_API_URL }}
+          BLOG_AUTOMATION_KEY: ${{ secrets.BLOG_AUTOMATION_KEY }}
+        run: python scripts/daily_blog_agent.py
