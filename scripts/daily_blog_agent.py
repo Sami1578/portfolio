@@ -3,15 +3,16 @@ import random
 import re
 import requests
 import json
-import google.generativeai as genai
+from google import genai
 
 # Load Config
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
-BLOG_API_URL = os.getenv("BLOG_API_URL") # e.g. https://samiahmed.dev/api/blog/auto-publish
+BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
 
-genai.configure(api_key=GEMINI_API_KEY)
+# Initialize modern GenAI client
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 TECH_STACKS = [
     ["Laravel", "Vue.js", "TailwindCSS"],
@@ -43,12 +44,10 @@ def generate_and_post():
     main_tech = selected_stack[0]
     secondary_tech = selected_stack[1]
 
-    # Fetch featured and inline images from Unsplash
+    # Fetch featured and inline images
     featured_url, feat_author, feat_link = fetch_unsplash_image(f"{main_tech} code web development")
     inline_url, inline_author, inline_link = fetch_unsplash_image(f"{secondary_tech} programming software")
 
-    # Prompt Gemini to structure HTML content including placeholding for the body image
-    model = genai.GenerativeModel("gemini-2.5-flash")
     prompt = f"""
     Write a detailed technical developer blog post about building applications with: {', '.join(selected_stack)}.
 
@@ -61,12 +60,17 @@ def generate_and_post():
     Ensure content is clean HTML compatible with rich text sanitizers.
     """
 
-    response = model.generate_content(prompt)
+    # Generate content using gemini-2.0-flash
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+    )
+
     raw_text = response.text.strip()
     clean_json = re.sub(r"^```json\s*|\s*```$", "", raw_text, flags=re.MULTILINE)
     post_data = json.loads(clean_json)
 
-    # Build inline image with proper Unsplash attribution
+    # Build inline image with Unsplash attribution
     inline_image_html = ""
     if inline_url:
         inline_image_html = f"""
@@ -93,7 +97,6 @@ def generate_and_post():
         "X-Automation-Key": BLOG_AUTOMATION_KEY
     }
 
-    # Render wakes up from sleep if needed; allow a longer timeout
     res = requests.post(BLOG_API_URL, json=payload, headers=headers, timeout=60)
     print(f"Status: {res.status_code}, Payload: {res.text}")
 
