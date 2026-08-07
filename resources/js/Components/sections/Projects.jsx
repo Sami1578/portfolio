@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Container from '../ui/Container';
 import SectionHeader from '../ui/SectionHeader';
 import TiltIDE from '../ui/TiltIDE'; // Import your 3D tilt component
+import FlipCard3D from '../ui/FlipCard3D'; // Tap-to-flip 3D card
 import useScrollReveal from '../../hooks/useScrollReveal';
 
 const SWIPE_THRESHOLD = 50; // px
@@ -52,27 +53,36 @@ export default function Projects({ projects }) {
                   
                   {/* Left Column: Gradient Panel with 3D Floating Stat Card */}
                   <div className="bg-gradient-to-br from-accent-soft via-surface-2 to-surface-2 p-8 lg:p-12 flex items-center justify-center">
-                    <TiltIDE className="w-full max-w-sm border border-border bg-surface p-6">
-                      <div 
-                        className="flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5"
-                        style={{ transform: 'translateZ(15px)' }}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-status animate-pulse" />
-                        {project.architecture_tag || 'System Architecture'}
-                      </div>
-                      
-                      <div 
-                        className="space-y-1"
-                        style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}
-                      >
-                        {project.stats?.map((stat, idx) => (
-                          <div key={idx} className="flex items-center justify-between py-3 border-b border-border last:border-none text-sm">
-                            <span className="text-text-muted">{stat.label}</span>
-                            <span className="font-display font-bold text-accent-deep">{stat.value}</span>
+                    <FlipCard3D
+                      className="w-full max-w-sm"
+                      front={
+                        <div className="p-6">
+                          <div className="flex items-center gap-2 font-mono-ui text-[11px] uppercase tracking-[0.16em] text-text-muted mb-5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-status animate-pulse" />
+                            {project.architecture_tag || 'System Architecture'}
                           </div>
-                        ))}
-                      </div>
-                    </TiltIDE>
+
+                          <div className="space-y-1">
+                            {project.stats?.map((stat, idx) => (
+                              <div key={idx} className="flex items-center justify-between py-3 border-b border-border last:border-none text-sm">
+                                <span className="text-text-muted">{stat.label}</span>
+                                <span className="font-display font-bold text-accent-deep">{stat.value}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      }
+                      back={
+                        <div className="p-6 h-full flex flex-col justify-center">
+                          <p className="font-mono-ui text-[11px] uppercase tracking-[0.16em] text-accent-deep mb-3">
+                            Why it mattered
+                          </p>
+                          <p className="text-text text-sm leading-relaxed">
+                            {project.highlights?.[0] || project.description}
+                          </p>
+                        </div>
+                      }
+                    />
                   </div>
 
                   {/* Right Column: Project Details with Micro-3D Interactions */}
