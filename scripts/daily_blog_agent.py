@@ -1,9 +1,11 @@
 import os
 import random
 import re
+import time
 import requests
 import json
 from google import genai
+from google.genai import errors
 
 # Load Config
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -11,7 +13,7 @@ UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
 
-# Initialize modern GenAI client
+# Initialize GenAI Client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 TECH_STACKS = [
@@ -44,7 +46,7 @@ def generate_and_post():
     main_tech = selected_stack[0]
     secondary_tech = selected_stack[1]
 
-    # Fetch featured and inline images
+    # Fetch images
     featured_url, feat_author, feat_link = fetch_unsplash_image(f"{main_tech} code web development")
     inline_url, inline_author, inline_link = fetch_unsplash_image(f"{secondary_tech} programming software")
 
@@ -60,17 +62,29 @@ def generate_and_post():
     Ensure content is clean HTML compatible with rich text sanitizers.
     """
 
-    # Generate content using gemini-2.0-flash
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt,
-    )
+    # Call gemini-2.5-flash-lite with exponential retry backoff
+    max_retries = 3
+    response = None
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash-lite",
+                contents=prompt,
+            )
+            break
+        except errors.ClientError as e:
+            if "429" in str(e) and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 15
+                print(f"Rate limited (429). Retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                raise e
 
     raw_text = response.text.strip()
     clean_json = re.sub(r"^```json\s*|\s*```$", "", raw_text, flags=re.MULTILINE)
     post_data = json.loads(clean_json)
 
-    # Build inline image with Unsplash attribution
+    # Build inline image tag with attribution
     inline_image_html = ""
     if inline_url:
         inline_image_html = f"""
