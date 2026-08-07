@@ -17,7 +17,7 @@ const FIELDS = [
 ];
 
 const inputClasses =
-  'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-accent focus:bg-white/[0.07] transition-colors duration-300';
+  'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-accent focus:bg-white/[0.07] focus:scale-[1.02] focus:-translate-y-0.5 focus:shadow-lg focus:shadow-accent/20 transition-all duration-300';
 
 export default function Contact({ contactInfo, socialLinks }) {
   const { formData, handleChange, handleSubmit, isSubmitting, submitted, error } = useContactForm();
