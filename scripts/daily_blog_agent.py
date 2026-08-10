@@ -1,4 +1,5 @@
 import os
+import sys
 import random
 import re
 import requests
@@ -12,6 +13,31 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 BLOG_API_URL = os.getenv("BLOG_API_URL")
 BLOG_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
+
+
+def check_required_env():
+    """
+    Fail loudly and immediately if required secrets are missing, instead of
+    letting the script proceed with None values that produce confusing
+    downstream errors (or, worse, silently-wrong requests).
+    """
+    required = {
+        "GEMINI_API_KEY": GEMINI_API_KEY,
+        "BLOG_API_URL": BLOG_API_URL,
+        "BLOG_AUTOMATION_KEY": BLOG_AUTOMATION_KEY,
+    }
+    missing = [name for name, val in required.items() if not val]
+    if missing:
+        print(f"FATAL: missing required environment variable(s): {', '.join(missing)}")
+        print("Check that these are set as GitHub Actions secrets AND passed into")
+        print("the job's `env:` block in your workflow YAML — being set as a repo")
+        print("secret alone is not enough, it must also be mapped in the workflow.")
+        sys.exit(1)
+    if not UNSPLASH_ACCESS_KEY:
+        # Non-fatal: fetch_unsplash_image() already degrades gracefully to
+        # None images, so we only warn here.
+        print("WARNING: UNSPLASH_ACCESS_KEY is not set — posts will be created without images.")
+
 
 # Initialize OpenAI client pointing to Google's Gemini API
 client = OpenAI(
@@ -283,10 +309,29 @@ def generate_and_post():
         "X-Automation-Key": BLOG_AUTOMATION_KEY
     }
 
-    res = requests.post(BLOG_API_URL, json=payload, headers=headers, timeout=60)
     print(f"Category: {category_key} | Stack: {selected_stack}")
-    print(f"Status: {res.status_code}, Response: {res.text}")
+    print(f"POST {BLOG_API_URL}")
+    res = requests.post(BLOG_API_URL, json=payload, headers=headers, timeout=60)
+    print(f"Status: {res.status_code}")
+    print(f"Response: {res.text}")
+
+    # THIS is the actual fix for "no error but no post created": requests
+    # does NOT raise on 4xx/5xx by default, so a rejected request (bad auth
+    # key, validation error, server error) would previously just print and
+    # let the script — and the whole GitHub Actions job — exit 0 as if it
+    # succeeded. raise_for_status() makes a failed post actually fail the job.
+    try:
+        res.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print(f"FATAL: blog API rejected the post (status {res.status_code}).")
+        print("Common causes: wrong/rotated BLOG_AUTOMATION_KEY, BLOG_API_URL")
+        print("pointing at the wrong route, or a validation error on one of")
+        print("the payload fields above (check the Response body for details).")
+        sys.exit(1)
+
+    print("Post created successfully.")
 
 
 if __name__ == "__main__":
+    check_required_env()
     generate_and_post()
