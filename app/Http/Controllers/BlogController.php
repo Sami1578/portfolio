@@ -12,12 +12,22 @@ use Inertia\Response;
 
 class BlogController extends Controller
 {
-    public function index(PortfolioService $portfolioService): Response
+    /**
+     * Posts shown per page on the public blog index. 9 fits a clean 3x3
+     * grid at the lg:grid-cols-3 breakpoint used in Blog/Index.jsx.
+     */
+    private const POSTS_PER_PAGE = 9;
+
+    public function index(Request $request, PortfolioService $portfolioService): Response
     {
+        $selectedTag = $request->query('tag');
+
         $posts = Post::where('is_published', true)
+            ->when($selectedTag, fn ($query) => $query->whereJsonContains('tech_tags', $selectedTag))
             ->latest('published_at')
-            ->get()
-            ->map(fn (Post $post) => [
+            ->paginate(self::POSTS_PER_PAGE)
+            ->withQueryString()
+            ->through(fn (Post $post) => [
                 'id' => $post->id,
                 'title' => $post->title,
                 'slug' => $post->slug,
@@ -31,6 +41,8 @@ class BlogController extends Controller
         return Inertia::render('Blog/Index', [
             ...$this->layoutData($portfolioService),
             'posts' => $posts,
+            'availableTags' => $this->availableTags(),
+            'selectedTag' => $selectedTag,
         ]);
     }
 
@@ -61,6 +73,25 @@ class BlogController extends Controller
                 ->get(['id', 'author_name', 'body', 'created_at']),
             'commenterEmail' => session('commenter_email'),
         ]);
+    }
+
+    /**
+     * Distinct tags across all published posts, used to render the tag
+     * filter bar on the blog index. Sorted alphabetically for a stable,
+     * predictable order in the UI.
+     *
+     * @return array<int, string>
+     */
+    private function availableTags(): array
+    {
+        return Post::where('is_published', true)
+            ->pluck('tech_tags')
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     /**

@@ -3,10 +3,12 @@ import PageHeader from '../../../Components/admin/PageHeader';
 import DataTable from '../../../Components/admin/DataTable';
 import AdminButton from '../../../Components/admin/AdminButton';
 import DeleteButton from '../../../Components/admin/DeleteButton';
+import Pagination from '../../../Components/ui/Pagination';
 import { Plus, BookOpen, Eye } from 'lucide-react';
 
-export default function PostsIndex({ posts = [] }) {
+export default function PostsIndex({ posts = { data: [], links: [] } }) {
   const resolve = (name, param) => (typeof route === 'function' ? route(name, param) : '#');
+  const rows = posts.data ?? [];
 
   const columns = [
     {
@@ -69,7 +71,7 @@ export default function PostsIndex({ posts = [] }) {
 
       <DataTable
         columns={columns}
-        rows={posts}
+        rows={rows}
         empty={{
           icon: BookOpen,
           title: 'No posts yet',
@@ -81,6 +83,8 @@ export default function PostsIndex({ posts = [] }) {
           ),
         }}
       />
+
+      {rows.length > 0 && <Pagination links={posts.links} />}
     </AdminLayout>
   );
 }

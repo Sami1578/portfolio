@@ -17,10 +17,16 @@ use Inertia\Response;
 
 class PostController extends Controller
 {
+    /**
+     * Rows per page in the admin posts table. Kept modest since each row
+     * shows a title + excerpt snippet, not just a compact single line.
+     */
+    private const POSTS_PER_PAGE = 15;
+
     public function index(): Response
     {
         return Inertia::render('Admin/Posts/Index', [
-            'posts' => Post::latest()->get(),
+            'posts' => Post::latest()->paginate(self::POSTS_PER_PAGE)->withQueryString(),
         ]);
     }
 
