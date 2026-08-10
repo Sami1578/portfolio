@@ -96,13 +96,56 @@ POST_CATEGORIES = {
 }
 
 
+def parse_model_json(raw_text):
+    """
+    Parse the JSON object returned by Gemini, defensively.
+
+    Two known failure modes handled here:
+    1. The response is wrapped in ```json ... ``` fences even though
+       response_format={"type": "json_object"} was requested.
+    2. The model emits raw/unescaped control characters (literal newlines,
+       tabs) inside JSON string values -- e.g. inside "content" where the
+       HTML spans multiple lines. Python's json.loads is strict by default
+       and rejects this ("Invalid control character at..."), even though
+       it's a common, recoverable LLM output quirk.
+    """
+    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text.strip())
+
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as strict_err:
+        # Retry allowing literal control characters inside strings. This is
+        # the actual fix for the "Invalid control character" crash.
+        try:
+            return json.loads(cleaned, strict=False)
+        except json.JSONDecodeError:
+            print("JSON parse failed even with strict=False. Raw model output was:")
+            print(cleaned)
+            raise strict_err
+
+
 def pick_category():
     names = list(POST_CATEGORIES.keys())
     weights = [POST_CATEGORIES[n]["weight"] for n in names]
     return random.choices(names, weights=weights, k=1)[0]
 
 
-def fetch_unsplash_image(query):
+# Target crop size for the FEATURED image only, matching the blog Show page's
+# full-height left column (split-screen layout). Unsplash's base photo URLs
+# accept w/h/fit params directly, so we request the exact crop instead of
+# cropping client-side. Width is generous since the column is ~50% of a
+# desktop viewport; height is tall since it fills the full viewport height.
+FEATURED_IMAGE_WIDTH = 1200
+FEATURED_IMAGE_HEIGHT = 1600  # portrait-ish, matches a full-height side panel
+
+
+def _sized_unsplash_url(raw_url, width, height):
+    """Append/override Unsplash crop params on a base photo URL."""
+    separator = "&" if "?" in raw_url else "?"
+    return f"{raw_url}{separator}w={width}&h={height}&fit=crop&crop=entropy&q=80"
+
+
+def fetch_unsplash_image(query, width=None, height=None):
     try:
         res = requests.get(
             f"https://api.unsplash.com/search/photos?query={query}&per_page=5",
@@ -112,6 +155,8 @@ def fetch_unsplash_image(query):
         if res.get("results"):
             photo = random.choice(res["results"])
             url = photo["urls"]["regular"]
+            if width and height:
+                url = _sized_unsplash_url(url, width, height)
             photographer = photo["user"]["name"]
             profile_link = photo["user"]["links"]["html"]
             return url, photographer, profile_link
@@ -191,8 +236,15 @@ def generate_and_post():
     main_tech = selected_stack[0]
     secondary_tech = selected_stack[1]
 
-    # Fetch Unsplash images
-    featured_url, feat_author, feat_link = fetch_unsplash_image(f"{main_tech} code web development")
+    # Fetch Unsplash images.
+    # Featured image is cropped to the exact size the Show page's full-height
+    # left panel needs. Inline image stays uncropped (regular size) since it
+    # just sits inside the article body at a natural aspect ratio.
+    featured_url, feat_author, feat_link = fetch_unsplash_image(
+        f"{main_tech} code web development",
+        width=FEATURED_IMAGE_WIDTH,
+        height=FEATURED_IMAGE_HEIGHT,
+    )
     inline_url, inline_author, inline_link = fetch_unsplash_image(f"{secondary_tech} programming software")
 
     prompt = build_prompt(category_key, selected_stack)
@@ -208,11 +260,7 @@ def generate_and_post():
     )
 
     raw_text = response.choices[0].message.content.strip()
-
-    # Gemini's OpenAI-compat layer occasionally wraps JSON in ```json fences
-    # even when response_format is set — strip them defensively.
-    raw_text = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_text.strip())
-    post_data = json.loads(raw_text)
+    post_data = parse_model_json(raw_text)
 
     # Build inline image HTML
     inline_image_html = build_image_html(
