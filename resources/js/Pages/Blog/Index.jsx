@@ -12,7 +12,7 @@ export default function BlogIndex({
   socialLinks,
   posts = { data: [], links: [] },
   availableTags = [],
-  selectedTag = null,
+  selectedTags = [],
 }) {
   const postList = posts.data ?? [];
 
@@ -47,12 +47,12 @@ export default function BlogIndex({
             description="Notes on the stacks and problems I work with."
           />
 
-          <TagFilter tags={availableTags} selectedTag={selectedTag} />
+          <TagFilter tags={availableTags} selectedTags={selectedTags} />
 
           {postList.length === 0 ? (
             <p className="text-text-muted">
-              {selectedTag
-                ? `No posts tagged "${selectedTag}" yet.`
+              {selectedTags.length > 0
+                ? `No posts tagged "${selectedTags.join('", "')}" yet.`
                 : 'No posts published yet — check back soon.'}
             </p>
           ) : (

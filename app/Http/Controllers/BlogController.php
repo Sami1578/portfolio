@@ -20,10 +20,24 @@ class BlogController extends Controller
 
     public function index(Request $request, PortfolioService $portfolioService): Response
     {
-        $selectedTag = $request->query('tag');
+        // Accept tags[]=a&tags[]=b in the query string. array_filter drops
+        // any empty strings so a stray `?tags[]=` doesn't turn into a
+        // phantom filter.
+        $selectedTags = array_values(array_filter((array) $request->query('tags', [])));
 
         $posts = Post::where('is_published', true)
-            ->when($selectedTag, fn ($query) => $query->whereJsonContains('tech_tags', $selectedTag))
+            ->when(!empty($selectedTags), function ($query) use ($selectedTags) {
+                // OR-match: a post matches if it has ANY of the selected
+                // tags, not all of them. This is the expected behavior for
+                // a "filter by tags" bar on a blog with multi-tag posts —
+                // requiring ALL selected tags would make selecting more
+                // tags narrow results toward zero, which reads as broken.
+                $query->where(function ($q) use ($selectedTags) {
+                    foreach ($selectedTags as $tag) {
+                        $q->orWhereJsonContains('tech_tags', $tag);
+                    }
+                });
+            })
             ->latest('published_at')
             ->paginate(self::POSTS_PER_PAGE)
             ->withQueryString()
@@ -42,7 +56,7 @@ class BlogController extends Controller
             ...$this->layoutData($portfolioService),
             'posts' => $posts,
             'availableTags' => $this->availableTags(),
-            'selectedTag' => $selectedTag,
+            'selectedTags' => $selectedTags,
         ]);
     }
 
