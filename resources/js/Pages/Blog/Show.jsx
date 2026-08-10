@@ -69,11 +69,13 @@ export default function BlogShow({ profile, whatsapp, socialLinks, post, comment
           </div>
 
           {post.featured_image_path && (
-            <img
-              src={`${post.featured_image_path}`}
-              alt={post.title}
-              className="mt-10 w-full rounded-xl border border-border object-cover"
-            />
+            <div className="mt-10 overflow-hidden rounded-xl border border-border bg-black/5 dark:bg-white/5">
+              <img
+                src={`${post.featured_image_path}`}
+                alt={post.title}
+                className="max-h-[450px] w-full object-contain mx-auto"
+              />
+            </div>
           )}
 
           <div className="post-content mt-10" dangerouslySetInnerHTML={{ __html: post.content }} />
