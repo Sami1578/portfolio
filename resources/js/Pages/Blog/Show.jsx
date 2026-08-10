@@ -3,6 +3,7 @@ import { Eye } from 'lucide-react';
 import Layout from '../../Components/Layout';
 import CommentForm from '../../Components/blog/CommentForm';
 import CommentList from '../../Components/blog/CommentList';
+import ShareButton from '../../Components/blog/ShareButton';
 
 // Height of the fixed navbar rendered inside <Layout>. Adjust this if the
 // navbar's height changes — both columns below are offset by this value so
@@ -128,6 +129,8 @@ export default function BlogShow({ profile, whatsapp, socialLinks, post, comment
             </div>
 
             <div className="post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+
+            <ShareButton title={post.title} text={post.meta_description} />
 
             <div className="mt-16 border-t border-border pt-12">
               <CommentList comments={comments} postSlug={post.slug ?? ''} commenterEmail={commenterEmail} />

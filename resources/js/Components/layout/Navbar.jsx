@@ -13,9 +13,8 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
-        scrolled || isOpen ? 'bg-bg/85 backdrop-blur-md border-border' : 'bg-bg/85 backdrop-blur-md border-transparent md:bg-transparent md:backdrop-blur-none'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${scrolled || isOpen ? 'bg-bg/85 backdrop-blur-md border-border' : 'bg-bg/85 backdrop-blur-md border-transparent md:bg-transparent md:backdrop-blur-none'
+        }`}
     >
       <Container>
         <div className="flex justify-between items-center h-20">
@@ -25,15 +24,15 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-9">
             {siteConfig.navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 className="font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <Button href="#contact" variant="primary" size="sm">
+            <Button href="/#contact" variant="primary" size="sm">
               {siteConfig.ctaLabel}
             </Button>
             <ThemeToggle />
@@ -54,16 +53,15 @@ export default function Navbar() {
         <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="py-6 space-y-5 border-t border-border">
             {siteConfig.navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
-                className="block font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
-                onClick={() => setIsOpen(false)}
+                className="font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <Button href="#contact" variant="primary" size="sm" className="w-full" onClick={() => setIsOpen(false)}>
+            <Button href="/#contact" variant="primary" size="sm">
               {siteConfig.ctaLabel}
             </Button>
           </div>
