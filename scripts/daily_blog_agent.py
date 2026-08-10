@@ -4,6 +4,7 @@ import random
 import re
 import requests
 import json
+from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 from openai import OpenAI
 
 # Load Environment Variables
@@ -165,10 +166,27 @@ FEATURED_IMAGE_WIDTH = 1200
 FEATURED_IMAGE_HEIGHT = 1600  # portrait-ish, matches a full-height side panel
 
 
-def _sized_unsplash_url(raw_url, width, height):
-    """Append/override Unsplash crop params on a base photo URL."""
-    separator = "&" if "?" in raw_url else "?"
-    return f"{raw_url}{separator}w={width}&h={height}&fit=crop&crop=entropy&q=80"
+def _sized_unsplash_url(raw_photo_url, width, height):
+    """
+    Build a sized Unsplash URL by setting params on the bare/raw photo URL
+    and REPLACING any existing size/crop params, rather than appending on
+    top of the already-parameterized "regular" URL. Appending on top of
+    "regular" (which already carries its own w/q/fit values) is what
+    produced URLs long enough to overflow a varchar(255) DB column.
+    Using the shorter "raw" base URL keeps the final URL as compact as
+    Unsplash allows.
+    """
+    parts = urlsplit(raw_photo_url)
+    params = dict(parse_qsl(parts.query))
+    params.update({
+        "w": str(width),
+        "h": str(height),
+        "fit": "crop",
+        "crop": "entropy",
+        "q": "80",
+    })
+    new_query = urlencode(params)
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, new_query, parts.fragment))
 
 
 def fetch_unsplash_image(query, width=None, height=None):
@@ -180,9 +198,12 @@ def fetch_unsplash_image(query, width=None, height=None):
         ).json()
         if res.get("results"):
             photo = random.choice(res["results"])
-            url = photo["urls"]["regular"]
             if width and height:
-                url = _sized_unsplash_url(url, width, height)
+                # Build from the bare "raw" URL, not "regular" — see
+                # _sized_unsplash_url docstring for why.
+                url = _sized_unsplash_url(photo["urls"]["raw"], width, height)
+            else:
+                url = photo["urls"]["regular"]
             photographer = photo["user"]["name"]
             profile_link = photo["user"]["links"]["html"]
             return url, photographer, profile_link
@@ -272,6 +293,15 @@ def generate_and_post():
         height=FEATURED_IMAGE_HEIGHT,
     )
     inline_url, inline_author, inline_link = fetch_unsplash_image(f"{secondary_tech} programming software")
+
+    # Defensive guard: don't let an oversized image URL be the reason the
+    # whole post fails to save (e.g. if the DB migration widening the column
+    # hasn't been deployed yet). Drop the image rather than crash the job —
+    # a post with no featured image is far better than no post at all.
+    MAX_IMAGE_URL_LENGTH = 2000
+    if featured_url and len(featured_url) > MAX_IMAGE_URL_LENGTH:
+        print(f"WARNING: featured image URL is {len(featured_url)} chars, dropping it to avoid a DB error.")
+        featured_url = None
 
     prompt = build_prompt(category_key, selected_stack)
 
