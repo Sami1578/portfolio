@@ -1,10 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\BlogCommentController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\ContactMessageController;
@@ -16,6 +11,13 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SkillCategoryController;
 use App\Http\Controllers\Admin\SkillController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\Admin\ResourceController as AdminResourceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +34,11 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/posts', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/posts/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/posts/{post:slug}/comments', [BlogCommentController::class, 'store'])->name('blog.comments.store');
+
+// --- Public routes (add near your existing Route::get('/blog', ...) block) ---
+Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
+Route::get('/resources/{resource:slug}', [ResourceController::class, 'show'])->name('resources.show');
+Route::get('/resources/{resource:slug}/download', [ResourceController::class, 'download'])->name('resources.download');
 
 /*
 |--------------------------------------------------------------------------
@@ -87,4 +94,16 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])
         Route::get('messages', [ContactMessageController::class, 'index'])->name('messages.index');
         Route::get('messages/{message}', [ContactMessageController::class, 'show'])->name('messages.show');
         Route::delete('messages/{message}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
+
+        Route::prefix('resources')->name('resources.')->group(function () {
+            Route::get('/', [AdminResourceController::class, 'index'])->name('index');
+            Route::get('/create', [AdminResourceController::class, 'create'])->name('create');
+            Route::post('/', [AdminResourceController::class, 'store'])->name('store');
+            Route::get('/{resource}/edit', [AdminResourceController::class, 'edit'])->name('edit');
+            Route::put('/{resource}', [AdminResourceController::class, 'update'])->name('update');
+            Route::delete('/{resource}', [AdminResourceController::class, 'destroy'])->name('destroy');
+            Route::patch('/{resource}/toggle-active', [AdminResourceController::class, 'toggleActive'])->name('toggle-active');
+            Route::delete('/{resource}/media/{media}', [AdminResourceController::class, 'destroyMedia'])->name('media.destroy'); // NEW
+
+        });
     });

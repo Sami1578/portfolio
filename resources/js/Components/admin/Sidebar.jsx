@@ -25,6 +25,7 @@ const nav = [
       { label: 'Skill Categories', href: 'admin.skill-categories.index', icon: Tags },
       { label: 'Skills', href: 'admin.skills.index', icon: Layers },
       { label: 'Blog Posts', href: 'admin.posts.index', icon: BookOpen },
+      { label: 'Resources', href: 'admin.resources.index', icon: FolderKanban },
       { label: 'Contact Details', href: 'admin.contact.edit', icon: Phone },
     ],
   },
