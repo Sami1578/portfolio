@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
         $middleware->prepend(\App\Http\Middleware\RedirectOldDomain::class);
+        $middleware->alias([
+            'automation.key' => \App\Http\Middleware\VerifyAutomationKey::class,
+        ]);
         $middleware->web(append: [
             HandleInertiaRequests::class,
         ]);

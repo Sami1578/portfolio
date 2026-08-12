@@ -1,0 +1,32 @@
+name: Daily AI Resource Publisher
+
+on:
+  schedule:
+    - cron: "0 15 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install openai requests
+
+      - name: Generate and publish resource
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          RESOURCE_API_URL: ${{ secrets.RESOURCE_API_URL }}
+          RESOURCE_AUTOMATION_KEY: ${{ secrets.RESOURCE_AUTOMATION_KEY }}
+        run: python scripts/daily_resource_agent.py
