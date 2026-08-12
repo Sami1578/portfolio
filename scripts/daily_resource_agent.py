@@ -15,7 +15,7 @@ from openai import OpenAI
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 RESOURCE_API_URL = os.getenv("RESOURCE_API_URL")
-RESOURCE_AUTOMATION_KEY = os.getenv("BLOG_AUTOMATION_KEY")
+RESOURCE_AUTOMATION_KEY = os.getenv("RESOURCE_AUTOMATION_KEY")
 
 
 def check_required_env():
