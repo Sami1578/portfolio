@@ -1,74 +1,61 @@
-import React from 'react';
-import Layout from '../../Components/Layout';
-import Container from '../../Components/ui/Container';
-import SectionHeader from '../../Components/ui/SectionHeader';
-import Pagination from '../../Components/ui/Pagination';
-import TagFilter from '../../Components/ui/TagFilter';
-import SearchInput from '../../Components/ui/SearchInput';
-import ResourceCard from '../../Components/resources/ResourceCard';
+import React, { useState } from 'react';
+import { Link } from '@inertiajs/react';
+import { Download, FileArchive, Images } from 'lucide-react';
+import BracketFrame from '../ui/BracketFrame';
 
-export default function ResourcesIndex({
-  profile,
-  whatsapp,
-  socialLinks,
-  resources = { data: [], links: [] },
-  availableTags = [],
-  selectedTags = [],
-  search = '',
-}) {
-  const resourceList = resources.data ?? [];
+export default function ResourceCard({ resource }) {
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const showThumb = resource.thumbnail_path && !thumbFailed;
 
   return (
-    <Layout
-      title={`Resources - ${profile.name}`}
-      description="Free code bundles, templates, and setup guides."
-      profile={profile}
-      whatsapp={whatsapp}
-      socialLinks={socialLinks}
-    >
-      <section className="py-24 md:py-32 pt-40">
-        <Container>
-          <SectionHeader
-            eyebrow="Resources"
-            heading="Downloads"
-            description="Code bundles and templates, free to use in your own projects."
-          />
-
-          <div className="mb-6 max-w-sm">
-            <SearchInput
-              routeName="resources.index"
-              initialValue={search}
-              extraParams={selectedTags.length ? { tags: selectedTags } : {}}
-              placeholder="Search resources…"
+    <Link href={route('resources.show', resource.slug)} className="group block">
+      <BracketFrame className="flex h-full flex-col overflow-hidden border border-border bg-surface/40 transition-colors group-hover:border-accent-soft">
+        <div className="relative aspect-video w-full overflow-hidden bg-ink-2">
+          {showThumb ? (
+            <img
+              src={`/storage/${resource.thumbnail_path}`}
+              alt={resource.title}
+              onError={() => setThumbFailed(true)}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-          </div>
-
-          <TagFilter
-            routeName="resources.index"
-            tags={availableTags}
-            selectedTags={selectedTags}
-            extraParams={search ? { search } : {}}
-          />
-
-          {resourceList.length === 0 ? (
-            <p className="text-text-muted">
-              {search || selectedTags.length > 0
-                ? 'No resources match your filters.'
-                : 'No resources published yet — check back soon.'}
-            </p>
           ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {resourceList.map((resource) => (
-                  <ResourceCard key={resource.id} resource={resource} />
-                ))}
-              </div>
-
-              <Pagination links={resources.links} />
-            </>
+            <div className="flex h-full w-full items-center justify-center text-text-muted">
+              <FileArchive size={28} />
+            </div>
           )}
-        </Container>
-      </section>
-    </Layout>
+
+          {resource.media_count > 1 && (
+            <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 font-mono-ui text-[10px] uppercase tracking-widest text-white">
+              <Images size={11} /> {resource.media_count}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col gap-3 p-5">
+          <h3 className="font-heading text-lg text-text">{resource.title}</h3>
+          <p className="line-clamp-2 text-sm text-text-muted">{resource.short_description}</p>
+
+          {resource.tech_tags?.length > 0 && (
+            <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
+              {resource.tech_tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-border px-2 py-0.5 font-mono-ui text-[10px] uppercase tracking-widest text-text-muted"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between border-t border-border pt-3 font-mono-ui text-[11px] uppercase tracking-widest text-text-muted">
+            <span className="inline-flex items-center gap-1">
+              <Download size={12} /> {resource.download_count}
+            </span>
+            <span className="text-accent transition-colors group-hover:text-accent-deep">View →</span>
+          </div>
+        </div>
+      </BracketFrame>
+    </Link>
   );
 }
