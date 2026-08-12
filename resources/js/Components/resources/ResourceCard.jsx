@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import { Download, FileArchive, Images } from 'lucide-react';
 import BracketFrame from '../ui/BracketFrame';
 
 export default function ResourceCard({ resource }) {
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const showThumb = resource.thumbnail_path && !thumbFailed;
+
   return (
     <Link href={route('resources.show', resource.slug)} className="group block">
       <BracketFrame className="flex h-full flex-col overflow-hidden border border-border bg-surface/40 transition-colors group-hover:border-accent-soft">
         <div className="relative aspect-video w-full overflow-hidden bg-ink-2">
-          {resource.thumbnail_path ? (
+          {showThumb ? (
             <img
               src={`/storage/${resource.thumbnail_path}`}
               alt={resource.title}
+              onError={() => setThumbFailed(true)}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (

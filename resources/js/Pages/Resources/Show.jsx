@@ -8,7 +8,10 @@ import { Download, FileArchive, Film } from 'lucide-react';
 export default function ResourceShow({ profile, whatsapp, socialLinks, resource }) {
   const media = resource.media ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mediaFailed, setMediaFailed] = useState({});
   const active = media[activeIndex];
+
+  const markFailed = (id) => setMediaFailed((prev) => ({ ...prev, [id]: true }));
 
   return (
     <Layout
@@ -35,15 +38,17 @@ export default function ResourceShow({ profile, whatsapp, socialLinks, resource 
           <p className="text-text-muted mb-8">{resource.short_description}</p>
 
           {/* Gallery — main viewer + thumbnail strip. Falls back to a
-             placeholder if the resource has no media yet. */}
+             placeholder if the resource has no media yet, or if a
+             media file fails to load (404 / moved / missing on disk). */}
           <div className="mb-10">
             <BracketFrame className="overflow-hidden border border-border bg-ink-2">
-              {active ? (
+              {active && !mediaFailed[active.id] ? (
                 active.type === 'video' ? (
                   <video
                     key={active.id}
                     src={`/storage/${active.path}`}
                     controls
+                    onError={() => markFailed(active.id)}
                     className="aspect-video w-full bg-black"
                   />
                 ) : (
@@ -51,6 +56,7 @@ export default function ResourceShow({ profile, whatsapp, socialLinks, resource 
                     key={active.id}
                     src={`/storage/${active.path}`}
                     alt={resource.title}
+                    onError={() => markFailed(active.id)}
                     className="aspect-video w-full object-cover"
                   />
                 )
@@ -63,28 +69,40 @@ export default function ResourceShow({ profile, whatsapp, socialLinks, resource 
 
             {media.length > 1 && (
               <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                {media.map((item, index) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveIndex(index)}
-                    className={[
-                      'relative h-16 w-24 shrink-0 overflow-hidden rounded-md border transition-colors',
-                      index === activeIndex ? 'border-accent' : 'border-border hover:border-accent-soft',
-                    ].join(' ')}
-                  >
-                    {item.type === 'video' ? (
-                      <>
-                        <video src={`/storage/${item.path}`} className="h-full w-full object-cover" muted />
-                        <span className="absolute bottom-1 right-1 rounded bg-black/70 p-0.5 text-white">
-                          <Film size={10} />
-                        </span>
-                      </>
-                    ) : (
-                      <img src={`/storage/${item.path}`} alt="" className="h-full w-full object-cover" />
-                    )}
-                  </button>
-                ))}
+                {media.map((item, index) =>
+                  mediaFailed[item.id] ? null : (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setActiveIndex(index)}
+                      className={[
+                        'relative h-16 w-24 shrink-0 overflow-hidden rounded-md border transition-colors',
+                        index === activeIndex ? 'border-accent' : 'border-border hover:border-accent-soft',
+                      ].join(' ')}
+                    >
+                      {item.type === 'video' ? (
+                        <>
+                          <video
+                            src={`/storage/${item.path}`}
+                            className="h-full w-full object-cover"
+                            muted
+                            onError={() => markFailed(item.id)}
+                          />
+                          <span className="absolute bottom-1 right-1 rounded bg-black/70 p-0.5 text-white">
+                            <Film size={10} />
+                          </span>
+                        </>
+                      ) : (
+                        <img
+                          src={`/storage/${item.path}`}
+                          alt=""
+                          onError={() => markFailed(item.id)}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </button>
+                  )
+                )}
               </div>
             )}
           </div>
