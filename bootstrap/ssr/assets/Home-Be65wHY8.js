@@ -1,6 +1,6 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import { useState, useRef, useEffect } from "react";
-import { C as Container, B as Button, L as Layout } from "./Layout-DgwpV-0y.js";
+import { C as Container, B as Button, L as Layout } from "./Layout-YOvIwj3D.js";
 import { ArrowRight, Smartphone, Database, Server, Code, ArrowLeft, Loader2, Send, MapPin, Phone, Mail } from "lucide-react";
 import { S as SectionHeader } from "./SectionHeader-DR3FZHAX.js";
 import { SiGit, SiDocker, SiMongodb, SiPostgresql, SiMysql, SiPython, SiNodedotjs, SiPhp, SiLaravel, SiJavascript, SiTailwindcss, SiVuedotjs, SiReact } from "react-icons/si";

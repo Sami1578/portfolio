@@ -1,7 +1,7 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import { useState } from "react";
 import { Loader2, Send, MessageCircle, Reply, Eye } from "lucide-react";
-import { B as Button, L as Layout } from "./Layout-DgwpV-0y.js";
+import { B as Button, L as Layout } from "./Layout-YOvIwj3D.js";
 import { useForm } from "@inertiajs/react";
 import { FaShareAlt, FaCheck, FaCopy, FaWhatsapp, FaLinkedin, FaTwitter, FaFacebook } from "react-icons/fa";
 import "./ThemeToggle-D0Maapqw.js";

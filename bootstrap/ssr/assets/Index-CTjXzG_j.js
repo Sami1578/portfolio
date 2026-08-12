@@ -1,6 +1,6 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import "react";
-import { L as Layout, C as Container } from "./Layout-DgwpV-0y.js";
+import { L as Layout, C as Container } from "./Layout-YOvIwj3D.js";
 import { S as SectionHeader } from "./SectionHeader-DR3FZHAX.js";
 import { P as Pagination } from "./Pagination-BgJAkZWc.js";
 import { Link, router } from "@inertiajs/react";

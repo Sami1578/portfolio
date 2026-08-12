@@ -1,6 +1,6 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { useState } from "react";
-import { L as Layout, C as Container, B as Button$1 } from "./Layout-DgwpV-0y.js";
+import { L as Layout, C as Container, B as Button$1 } from "./Layout-YOvIwj3D.js";
 import { B as Button } from "./BracketFrame-XJeLCd7A.js";
 import { FileArchive, Film, Download } from "lucide-react";
 import "@inertiajs/react";
@@ -9,7 +9,9 @@ import "react-icons/fa";
 function ResourceShow({ profile, whatsapp, socialLinks, resource }) {
   const media = resource.media ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [mediaFailed, setMediaFailed] = useState({});
   const active = media[activeIndex];
+  const markFailed = (id) => setMediaFailed((prev) => ({ ...prev, [id]: true }));
   return /* @__PURE__ */ jsx(
     Layout,
     {
@@ -30,11 +32,12 @@ function ResourceShow({ profile, whatsapp, socialLinks, resource }) {
         /* @__PURE__ */ jsx("h1", { className: "font-heading text-3xl md:text-4xl text-text mb-3", children: resource.title }),
         /* @__PURE__ */ jsx("p", { className: "text-text-muted mb-8", children: resource.short_description }),
         /* @__PURE__ */ jsxs("div", { className: "mb-10", children: [
-          /* @__PURE__ */ jsx(Button, { className: "overflow-hidden border border-border bg-ink-2", children: active ? active.type === "video" ? /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx(Button, { className: "overflow-hidden border border-border bg-ink-2", children: active && !mediaFailed[active.id] ? active.type === "video" ? /* @__PURE__ */ jsx(
             "video",
             {
               src: `/storage/${active.path}`,
               controls: true,
+              onError: () => markFailed(active.id),
               className: "aspect-video w-full bg-black"
             },
             active.id
@@ -43,26 +46,45 @@ function ResourceShow({ profile, whatsapp, socialLinks, resource }) {
             {
               src: `/storage/${active.path}`,
               alt: resource.title,
+              onError: () => markFailed(active.id),
               className: "aspect-video w-full object-cover"
             },
             active.id
           ) : /* @__PURE__ */ jsx("div", { className: "flex aspect-video items-center justify-center text-text-muted", children: /* @__PURE__ */ jsx(FileArchive, { size: 32 }) }) }),
-          media.length > 1 && /* @__PURE__ */ jsx("div", { className: "mt-3 flex gap-2 overflow-x-auto pb-1", children: media.map((item, index) => /* @__PURE__ */ jsx(
-            "button",
-            {
-              type: "button",
-              onClick: () => setActiveIndex(index),
-              className: [
-                "relative h-16 w-24 shrink-0 overflow-hidden rounded-md border transition-colors",
-                index === activeIndex ? "border-accent" : "border-border hover:border-accent-soft"
-              ].join(" "),
-              children: item.type === "video" ? /* @__PURE__ */ jsxs(Fragment, { children: [
-                /* @__PURE__ */ jsx("video", { src: `/storage/${item.path}`, className: "h-full w-full object-cover", muted: true }),
-                /* @__PURE__ */ jsx("span", { className: "absolute bottom-1 right-1 rounded bg-black/70 p-0.5 text-white", children: /* @__PURE__ */ jsx(Film, { size: 10 }) })
-              ] }) : /* @__PURE__ */ jsx("img", { src: `/storage/${item.path}`, alt: "", className: "h-full w-full object-cover" })
-            },
-            item.id
-          )) })
+          media.length > 1 && /* @__PURE__ */ jsx("div", { className: "mt-3 flex gap-2 overflow-x-auto pb-1", children: media.map(
+            (item, index) => mediaFailed[item.id] ? null : /* @__PURE__ */ jsx(
+              "button",
+              {
+                type: "button",
+                onClick: () => setActiveIndex(index),
+                className: [
+                  "relative h-16 w-24 shrink-0 overflow-hidden rounded-md border transition-colors",
+                  index === activeIndex ? "border-accent" : "border-border hover:border-accent-soft"
+                ].join(" "),
+                children: item.type === "video" ? /* @__PURE__ */ jsxs(Fragment, { children: [
+                  /* @__PURE__ */ jsx(
+                    "video",
+                    {
+                      src: `/storage/${item.path}`,
+                      className: "h-full w-full object-cover",
+                      muted: true,
+                      onError: () => markFailed(item.id)
+                    }
+                  ),
+                  /* @__PURE__ */ jsx("span", { className: "absolute bottom-1 right-1 rounded bg-black/70 p-0.5 text-white", children: /* @__PURE__ */ jsx(Film, { size: 10 }) })
+                ] }) : /* @__PURE__ */ jsx(
+                  "img",
+                  {
+                    src: `/storage/${item.path}`,
+                    alt: "",
+                    onError: () => markFailed(item.id),
+                    className: "h-full w-full object-cover"
+                  }
+                )
+              },
+              item.id
+            )
+          ) })
         ] }),
         /* @__PURE__ */ jsxs("div", { className: "mb-10 flex items-center justify-between rounded-md border border-border p-5", children: [
           /* @__PURE__ */ jsxs("div", { children: [
