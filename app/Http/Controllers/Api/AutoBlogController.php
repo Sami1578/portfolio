@@ -11,13 +11,10 @@ class AutoBlogController extends Controller
 {
     public function store(Request $request): JsonResponse
     {
-        // 1. Authenticate secret token from headers
-        $automationKey = $request->header('X-Automation-Key');
-        if (!$automationKey || $automationKey !== config('app.blog_automation_key')) {
-            return response()->json(['message' => 'Unauthorized key.'], 401);
-        }
+        // Auth is handled by the VerifyAutomationKey middleware at the route
+        // level — no key check needed here anymore.
 
-        // 2. Validate payload matching your Post model
+        // Validate payload matching your Post model
         $validated = $request->validate([
             'title'               => 'required|string|max:255',
             'excerpt'             => 'nullable|string',
@@ -27,7 +24,7 @@ class AutoBlogController extends Controller
             'user_id'             => 'nullable|integer|exists:users,id',
         ]);
 
-        // 3. Create post using model attributes
+        // Create post using model attributes
         $post = Post::create([
             'user_id'             => $validated['user_id'] ?? 1, // Default admin user ID
             'title'               => $validated['title'],
