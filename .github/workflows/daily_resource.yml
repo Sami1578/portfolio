@@ -28,5 +28,5 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           RESOURCE_API_URL: ${{ secrets.RESOURCE_API_URL }}
-          RESOURCE_AUTOMATION_KEY: ${{ secrets.RESOURCE_AUTOMATION_KEY }}
+          RESOURCE_AUTOMATION_KEY: ${{ secrets.BLOG_AUTOMATION_KEY }}
         run: python scripts/daily_resource_agent.py
