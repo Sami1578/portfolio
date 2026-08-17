@@ -51,17 +51,18 @@ export default function Navbar() {
         </div>
 
         <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="py-6 space-y-5 border-t border-border">
+          <div className="flex flex-col items-start py-6 gap-5 border-t border-border">
             {siteConfig.navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
+                onClick={() => setIsOpen(false)}
+                className="block w-full font-medium text-sm text-text-muted hover:text-text transition-colors duration-200"
               >
                 {link.name}
               </Link>
             ))}
-            <Button href="/#contact" variant="primary" size="sm">
+            <Button href="/#contact" variant="primary" size="sm" onClick={() => setIsOpen(false)}>
               {siteConfig.ctaLabel}
             </Button>
           </div>
