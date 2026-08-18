@@ -38,18 +38,25 @@ class ResourceController extends Controller
             ->latest()
             ->paginate(self::RESOURCES_PER_PAGE)
             ->withQueryString()
-            ->through(fn (Resource $resource) => [
-                'id' => $resource->id,
-                'title' => $resource->title,
-                'slug' => $resource->slug,
-                'short_description' => $resource->short_description,
-                'tech_tags' => $resource->tech_tags ?? [],
-                'download_count' => $resource->download_count,
-                // Card only needs the first image for the grid thumbnail
-                // plus a count badge — full gallery lives on the detail page.
-                'thumbnail_path' => $resource->media->first()?->path,
-                'media_count' => $resource->media->count(),
-            ]);
+            ->through(function (Resource $resource) {
+                $firstMedia = $resource->media->first();
+
+                return [
+                    'id' => $resource->id,
+                    'title' => $resource->title,
+                    'slug' => $resource->slug,
+                    'short_description' => $resource->short_description,
+                    'tech_tags' => $resource->tech_tags ?? [],
+                    'download_count' => $resource->download_count,
+                    // Card only needs the first image for the grid thumbnail
+                    // plus a count badge — full gallery lives on the detail page.
+                    // thumbnail_url is disk-agnostic (Storage::url respects
+                    // filesystems.default, so it resolves correctly on R2 in prod).
+                    'thumbnail_path' => $firstMedia?->path,
+                    'thumbnail_url' => $firstMedia ? Storage::url($firstMedia->path) : null,
+                    'media_count' => $resource->media->count(),
+                ];
+            });
 
         return Inertia::render('Resources/Index', [
             ...$this->layoutData($portfolioService),
@@ -78,8 +85,13 @@ class ResourceController extends Controller
                 'media' => $resource->media->map(fn ($m) => [
                     'id' => $m->id,
                     'path' => $m->path,
+                    // Disk-agnostic URL (works for local `public` disk and R2 alike)
+                    'url' => Storage::url($m->path),
                     'type' => $m->type,
                 ]),
+                // Used for JSON-LD datePublished / dateModified on the detail page
+                'created_at' => $resource->created_at?->toIso8601String(),
+                'updated_at' => $resource->updated_at?->toIso8601String(),
             ],
         ]);
     }
