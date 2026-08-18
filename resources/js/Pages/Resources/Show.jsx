@@ -13,6 +13,30 @@ export default function ResourceShow({ profile, whatsapp, socialLinks, resource 
 
   const markFailed = (id) => setMediaFailed((prev) => ({ ...prev, [id]: true }));
 
+  const canonicalUrl =
+    typeof route === 'function' ? route('resources.show', resource.slug) : undefined;
+  const downloadUrl =
+    resource.has_code_bundle && typeof route === 'function'
+      ? route('resources.download', resource.slug)
+      : undefined;
+  const previewImage = media[0]?.url;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': resource.has_code_bundle ? 'SoftwareSourceCode' : 'CreativeWork',
+    name: resource.title,
+    description: resource.short_description,
+    ...(canonicalUrl && { url: canonicalUrl }),
+    ...(previewImage && { image: previewImage }),
+    ...(resource.tech_tags?.length > 0 && {
+      keywords: resource.tech_tags.join(', '),
+      ...(resource.has_code_bundle && { programmingLanguage: resource.tech_tags }),
+    }),
+    ...(resource.created_at && { datePublished: resource.created_at }),
+    ...(resource.updated_at && { dateModified: resource.updated_at }),
+    ...(downloadUrl && { downloadUrl }),
+  };
+
   return (
     <Layout
       title={`${resource.title} - ${profile.name}`}
@@ -20,6 +44,9 @@ export default function ResourceShow({ profile, whatsapp, socialLinks, resource 
       profile={profile}
       whatsapp={whatsapp}
       socialLinks={socialLinks}
+      image={previewImage}
+      keywords={resource.tech_tags}
+      jsonLd={jsonLd}
     >
       <section className="py-24 md:py-32 pt-40">
         <Container className="max-w-3xl">

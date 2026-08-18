@@ -17,14 +17,63 @@ export default function ResourcesIndex({
   search = '',
 }) {
   const resourceList = resources.data ?? [];
+  const currentPage = resources.current_page ?? 1;
+
+  // Filtered/searched/paginated views get their own title + description so
+  // search engines don't see identical metadata across every query state.
+  const baseTitle = 'Resources';
+  const pageSuffix = currentPage > 1 ? ` — Page ${currentPage}` : '';
+  const filterSuffix = search
+    ? ` — "${search}"`
+    : selectedTags.length > 0
+      ? ` — ${selectedTags.join(', ')}`
+      : '';
+  const pageTitle = `${baseTitle}${filterSuffix}${pageSuffix} - ${profile.name}`;
+
+  const pageDescription =
+    search || selectedTags.length > 0
+      ? `Free code bundles, templates, and setup guides matching ${
+          search ? `"${search}"` : selectedTags.join(', ')
+        }.`
+      : 'Free code bundles, templates, and setup guides.';
+
+  // First resource with a thumbnail makes a reasonable OG/Twitter preview
+  // image for the listing page; Layout falls back to the site default otherwise.
+  const previewImage = resourceList.find((r) => r.thumbnail_url)?.thumbnail_url;
+
+  const canonicalUrl = typeof route === 'function' ? route('resources.index') : undefined;
+
+  const itemListElement = resourceList.map((resource, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: typeof route === 'function' ? route('resources.show', resource.slug) : undefined,
+    name: resource.title,
+  }));
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: pageTitle,
+    description: pageDescription,
+    ...(canonicalUrl && { url: canonicalUrl }),
+    ...(itemListElement.length > 0 && {
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement,
+      },
+    }),
+  };
 
   return (
     <Layout
-      title={`Resources - ${profile.name}`}
-      description="Free code bundles, templates, and setup guides."
+      title={pageTitle}
+      description={pageDescription}
       profile={profile}
       whatsapp={whatsapp}
       socialLinks={socialLinks}
+      image={previewImage}
+      keywords={availableTags}
+      jsonLd={jsonLd}
     >
       <section className="py-24 md:py-32 pt-40">
         <Container>
